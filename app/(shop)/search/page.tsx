@@ -14,7 +14,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 
 export default async function SearchPage({ searchParams }: Props) {
   const { q = "" } = await searchParams;
-  const results = withPhotosList(searchProducts(q));
+  const results = withPhotosList(await searchProducts(q));
   const t = await getT();
 
   return (

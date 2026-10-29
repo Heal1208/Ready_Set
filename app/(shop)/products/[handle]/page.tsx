@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getAllProducts, getProductByHandle, getRelatedProducts } from "@/lib/data/products";
-import { getProductPhotos, withPhotos, withPhotosList } from "@/lib/utils/productImages";
+import { withPhotos, withPhotosList } from "@/lib/utils/productImages";
 import { company } from "@/lib/data/company";
 import { formatPrice } from "@/lib/utils/formatPrice";
 import { Gallery } from "@/components/product/Gallery";
@@ -19,16 +19,16 @@ type Props = {
 };
 
 export async function generateStaticParams() {
-  return getAllProducts().map((p) => ({ handle: p.handle }));
+  return (await getAllProducts()).map((p) => ({ handle: p.handle }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { handle } = await params;
-  const product = getProductByHandle(handle);
+  const product = await getProductByHandle(handle);
   if (!product) return {};
   // Chưa có ảnh thật thì không set openGraph.images ở đây — trang sẽ tự dùng ảnh
   // mặc định của (shop)/opengraph-image.tsx (logo thương hiệu) thay vì để trống.
-  const photos = getProductPhotos(product.handle);
+  const photos = withPhotos(product).photos!;
   const locale = await getLocale();
   return {
     title: product.title,
@@ -41,10 +41,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ProductPage({ params, searchParams }: Props) {
   const { handle } = await params;
   const { variant } = await searchParams;
-  const product = getProductByHandle(handle);
+  const product = await getProductByHandle(handle);
   if (!product) notFound();
 
-  const related = withPhotosList(getRelatedProducts(product));
+  const related = withPhotosList(await getRelatedProducts(product));
   // Gắn "photos" vào product (không chỉ dùng riêng cho Gallery) — ProductBuyBox cần
   // nó để lưu đúng ảnh thật vào giỏ hàng khi bấm "Thêm vào giỏ" (xem CartLineThumb).
   const productWithPhotos = withPhotos(product);
@@ -67,7 +67,7 @@ export default async function ProductPage({ params, searchParams }: Props) {
     name: product.title,
     sku: selectedVariant.sku,
     description: product.descriptionVi,
-    brand: { "@type": "Brand", name: "25 O'Clock" },
+    brand: { "@type": "Brand", name: "Ready Set" },
     offers: {
       "@type": "Offer",
       url: canonicalUrl,

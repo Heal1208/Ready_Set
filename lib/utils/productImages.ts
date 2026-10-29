@@ -29,22 +29,12 @@ export function getProductPhotos(handle: string): string[] {
     .map((f) => `/images/products/${handle}/${encodeURIComponent(f)}`);
 }
 
-/** Gắn `photos` thật vào 1 sản phẩm. */
+/** Gắn `photos` thật vào 1 sản phẩm — ảnh admin đã chọn (lưu trong DB) được ưu tiên. */
 export function withPhotos(product: Product): Product {
-  return { ...product, photos: getProductPhotos(product.handle) };
+  return { ...product, photos: product.photos ?? getProductPhotos(product.handle) };
 }
 
 /** Gắn `photos` thật vào 1 danh sách sản phẩm. */
 export function withPhotosList(products: Product[]): Product[] {
   return products.map(withPhotos);
-}
-
-/**
- * Map handle -> danh sách ảnh thật, dùng cho những nơi hiển thị sản phẩm mà
- * KHÔNG chạy trong Server Component nên không tự gọi getProductPhotos() được
- * (ví dụ ô tìm kiếm SearchOverlay — chạy phía client) — phải đọc sẵn ở server
- * (layout.tsx) rồi truyền xuống qua props.
- */
-export function getProductPhotosMap(handles: string[]): Record<string, string[]> {
-  return Object.fromEntries(handles.map((h) => [h, getProductPhotos(h)]));
 }

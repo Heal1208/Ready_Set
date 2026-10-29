@@ -1,3 +1,6 @@
+import { cache } from "react";
+import { getSupabaseAdmin, isSupabaseConfigured } from "@/lib/supabase/admin";
+import { filterProducts } from "@/lib/utils/productSearch";
 import type { Money, Product, ProductImage, ProductVariant, SizeChartRow, Tone } from "@/lib/types";
 
 function vnd(amount: number): Money {
@@ -49,7 +52,7 @@ const ECLIPSE_SIZE_CHART: SizeChartRow[] = [
   { size: "2", waist: "82 cm", length: "105 cm", thigh: "31 cm", legOpening: "25 cm" },
   { size: "3", waist: "88 cm", length: "108 cm", thigh: "32 cm", legOpening: "26 cm" },
 ];
-type RawProduct = {
+export type RawProduct = {
   code: string;
   /** Tên sản phẩm đầy đủ, dùng nguyên văn làm title — không qua khuôn "25OC | <MÃ> <LOẠI>". */
   title: string;
@@ -81,6 +84,8 @@ type RawProduct = {
   unavailableSizes?: string[];
   soldOut?: boolean;
   lastSizes?: boolean;
+  /** URL ảnh do admin chọn/upload — không có thì đọc ảnh từ public/images/products/<handle>/. */
+  photos?: string[];
 };
 
 // Danh mục sản phẩm thật hiện có: 2 quần jeans (Bottoms) + 1 áo thun (Tops).
@@ -94,7 +99,7 @@ type RawProduct = {
 // Hết nhiều size thì liệt kê thoải mái: `unavailableSizes: ["1", "2"]`.
 // Muốn mở bán lại — xoá size đó ra khỏi mảng (hoặc để lại `[]`) là xong,
 // không cần sửa gì khác.
-const RAW: RawProduct[] = [
+export const SEED_PRODUCTS: RawProduct[] = [
   {
     code: "MBC",
     title: "MIDNIGHT BOOTCUT RAW DENIM PANT",
@@ -169,7 +174,7 @@ const RAW: RawProduct[] = [
       "Form: Straight fit",
       "YKK zipper",
       "Zipper tape được xử lý bọc viền tỉ mỉ",
-      "Cúc kim loại donut 25 O'CLOCK",
+      "Cúc kim loại donut READY SET",
       "Signature baby blue tab",
       "Signature strap phía trước",
       "Stainless steel lighter clip ở túi sau",
@@ -181,7 +186,7 @@ const RAW: RawProduct[] = [
       "Fit: Straight fit",
       "YKK zipper",
       "Zipper tape carefully edge-bound",
-      "25 O'CLOCK donut metal button",
+      "READY SET donut metal button",
       "Signature baby blue tab",
       "Signature front strap",
       "Stainless steel lighter clip on the back pocket",
@@ -217,7 +222,7 @@ const RAW: RawProduct[] = [
       "Form: Oversized",
       "Chất liệu đã xử lý, hạn chế co rút",
       "Zipper tape được xử lý bọc viền tỉ mỉ",
-      "Cúc kim loại donut 25 O'CLOCK",
+      "Cúc kim loại donut READY SET",
       "Hình in hiệu ứng faded & cracked",
     ],
     detailsEn: [
@@ -225,7 +230,7 @@ const RAW: RawProduct[] = [
       "Fit: Oversized",
       "Pre-treated fabric, resists shrinking",
       "Zipper tape carefully edge-bound",
-      "25 O'CLOCK donut metal button",
+      "READY SET donut metal button",
       "Faded & cracked print effect",
     ],
   },
@@ -253,16 +258,16 @@ const RAW: RawProduct[] = [
     createdAt: "2026-09-04",
     details: [
       "Màu: Đen (Black)",
-      "Len dệt mềm, co giãn tốt, thoáng không ngứa, logo thêu OnlyFriends/25O’Clock, kim băng đính kèm, unisex.",
+      "Len dệt mềm, co giãn tốt, thoáng không ngứa, logo thêu OnlyFriends/Ready Set, kim băng đính kèm, unisex.",
     ],
     detailsEn: [
       "Color: Black",
-      "Soft knit wool, stretchy, breathable and non-itchy, embroidered OnlyFriends/25 O'Clock logo, pin included, unisex.",
+      "Soft knit wool, stretchy, breathable and non-itchy, embroidered OnlyFriends/Ready Set logo, pin included, unisex.",
     ],
   },
 ];
 
-export const products: Product[] = RAW.map((r) => {
+export function toProduct(r: RawProduct): Product {
   const price = vnd(r.price);
   const compareAtPrice = r.compareAtPrice ? vnd(r.compareAtPrice) : undefined;
   return {
@@ -294,44 +299,42 @@ export const products: Product[] = RAW.map((r) => {
     createdAt: r.createdAt,
     soldOut: r.soldOut,
     lastSizes: r.lastSizes,
+    photos: r.photos,
   };
+}
+
+/**
+ * Sản phẩm lưu trong Supabase (bảng `products`, sửa ở /admin/products). Chưa cấu hình
+ * Supabase thì dùng danh sách SEED_PRODUCTS ở trên (chỉ đọc). `cache` — nhiều component
+ * trong cùng 1 request gọi lại cũng chỉ query DB 1 lần.
+ */
+export const getRawProducts = cache(async (): Promise<RawProduct[]> => {
+  if (!isSupabaseConfigured()) return SEED_PRODUCTS;
+  const { data, error } = await getSupabaseAdmin().from("products").select("data").order("created_at");
+  if (error) throw new Error(`Không đọc được bảng products: ${error.message}`);
+  return (data as { data: RawProduct }[]).map((row) => row.data);
 });
 
-export function getAllProducts(): Product[] {
-  return products;
+export async function getAllProducts(): Promise<Product[]> {
+  return (await getRawProducts()).map(toProduct);
 }
 
-export function getProductByHandle(handle: string): Product | undefined {
-  return products.find((p) => p.handle === handle);
+export async function getProductByHandle(handle: string): Promise<Product | undefined> {
+  return (await getAllProducts()).find((p) => p.handle === handle);
 }
 
-export function getProductsByCollection(handle: string): Product[] {
+export async function getProductsByCollection(handle: string): Promise<Product[]> {
+  const products = await getAllProducts();
   if (handle === "all") return products;
   return products.filter((p) => p.collections.includes(handle));
 }
 
-export function getRelatedProducts(product: Product, limit = 4): Product[] {
-  return products
+export async function getRelatedProducts(product: Product, limit = 4): Promise<Product[]> {
+  return (await getAllProducts())
     .filter((p) => p.handle !== product.handle && p.category === product.category)
     .slice(0, limit);
 }
 
-export function searchProducts(query: string, limit?: number): Product[] {
-  const q = normalize(query);
-  if (!q) return [];
-  const results = products.filter((p) => {
-    const haystack = normalize(`${p.title} ${p.code} ${p.category} ${p.tags.join(" ")}`);
-    return haystack.includes(q);
-  });
-  return typeof limit === "number" ? results.slice(0, limit) : results;
-}
-
-/** Bỏ dấu tiếng Việt để tìm kiếm không dấu (mục 6.9). */
-export function normalize(input: string): string {
-  return input
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .replace(/đ/g, "d")
-    .trim();
+export async function searchProducts(query: string, limit?: number): Promise<Product[]> {
+  return filterProducts(await getAllProducts(), query, limit);
 }

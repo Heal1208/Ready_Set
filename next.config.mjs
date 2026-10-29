@@ -35,7 +35,17 @@ const nextConfig = {
         protocol: "https",
         hostname: "cdn.shopify.com",
       },
+      // Ảnh sản phẩm upload từ /admin/products (Supabase Storage, bucket "products").
+      {
+        protocol: "https",
+        hostname: "*.supabase.co",
+        pathname: "/storage/v1/object/public/**",
+      },
     ],
+  },
+  experimental: {
+    // Form sản phẩm ở /admin gửi kèm ảnh — mặc định server action chỉ nhận 1MB.
+    serverActions: { bodySizeLimit: "50mb" },
   },
 };
 

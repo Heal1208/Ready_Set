@@ -7,7 +7,7 @@ import { getT } from "@/lib/i18n/locale";
 
 export async function NewArrivals() {
   const newest = withPhotosList(
-    [...getAllProducts()]
+    [...(await getAllProducts())]
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
       .slice(0, 8),
   );

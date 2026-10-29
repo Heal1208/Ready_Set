@@ -5,7 +5,7 @@ import { staticPages } from "@/lib/data/pages";
 
 const BASE_URL = "https://25oclockhome.com";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = ["", "/campaign", "/pages/contact"].map((path) => ({
     url: `${BASE_URL}${path}`,
     lastModified: new Date(),
@@ -16,7 +16,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified: new Date(),
   }));
 
-  const productRoutes: MetadataRoute.Sitemap = getAllProducts().map((p) => ({
+  const productRoutes: MetadataRoute.Sitemap = (await getAllProducts()).map((p) => ({
     url: `${BASE_URL}/products/${p.handle}`,
     lastModified: new Date(p.createdAt),
   }));

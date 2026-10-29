@@ -37,13 +37,13 @@ function isHanoi(cityName: string | undefined): boolean {
  * dòng nào không khớp được sản phẩm/size thật hoặc size đó đã hết hàng — khi đó từ chối
  * lưu cả đơn thay vì lưu với giá sai.
  */
-function resolveTrustedLines(rawLines: OrderLineInput[]): { lines: OrderLineInput[]; subtotalAmount: number } | null {
+async function resolveTrustedLines(rawLines: OrderLineInput[]): Promise<{ lines: OrderLineInput[]; subtotalAmount: number } | null> {
   if (rawLines.length === 0) return null;
   const lines: OrderLineInput[] = [];
   let subtotalAmount = 0;
   for (const raw of rawLines) {
     if (!raw.productHandle || !raw.variantId) return null;
-    const product = getProductByHandle(raw.productHandle);
+    const product = await getProductByHandle(raw.productHandle);
     const variant = product?.variants.find((v) => v.id === raw.variantId);
     if (!product || !variant || !variant.available) return null;
     // Số lượng 1–10, khớp giới hạn trên UI (xem ProductBuyBox.tsx) — phòng khi client gửi
@@ -117,7 +117,7 @@ async function sendAdminEmail(payload: OrderPayload): Promise<boolean> {
   try {
     const resend = new Resend(apiKey);
     const { error } = await resend.emails.send({
-      from: "25 o'clock <onboarding@resend.dev>",
+      from: "Ready Set <onboarding@resend.dev>",
       to: company.orderNotificationEmail,
       subject: `Đơn hàng mới #${payload.orderId} — ${formatPrice(payload.total)}`,
       html: buildAdminEmailHtml(payload),
@@ -151,7 +151,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: "invalid_email" }, { status: 400 });
   }
 
-  const resolved = resolveTrustedLines(rawPayload.lines);
+  const resolved = await resolveTrustedLines(rawPayload.lines);
   if (!resolved) {
     return NextResponse.json({ ok: false, error: "invalid_line" }, { status: 400 });
   }

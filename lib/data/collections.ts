@@ -1,8 +1,7 @@
 import type { Collection } from "@/lib/types";
-import { getProductsByCollection } from "@/lib/data/products";
 
 export const collections: Collection[] = [
-  { handle: "all", title: "Tất cả sản phẩm", description: "Toàn bộ sản phẩm hiện có của 25 o'clock.", tone: "sand" },
+  { handle: "all", title: "Tất cả sản phẩm", description: "Toàn bộ sản phẩm hiện có của Ready Set.", tone: "sand" },
   { handle: "tops", title: "Tops", description: "Áo thun, sơ mi, hoodie, áo len.", tone: "clay" },
   { handle: "bottoms", title: "Bottoms", description: "Quần denim, quần vải, quần cargo.", tone: "stone" },
   { handle: "accessories", title: "Accessories", description: "Mũ, nón, phụ kiện đi kèm.", tone: "olive" },
@@ -11,10 +10,6 @@ export const collections: Collection[] = [
 
 export function getCollectionByHandle(handle: string): Collection | undefined {
   return collections.find((c) => c.handle === handle);
-}
-
-export function getCollectionCount(handle: string): number {
-  return getProductsByCollection(handle).length;
 }
 
 /** Danh mục hiển thị trong nav (mục 2.3 / 6.1), không tính "new". */

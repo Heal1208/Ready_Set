@@ -43,3 +43,16 @@ create index if not exists customers_email_idx on customers (lower(email));
 
 -- Cũng chỉ đọc/ghi qua service role key ở server (lib/data/customers.ts) — mật khẩu
 -- luôn được băm (scrypt) trước khi lưu, không bao giờ lưu mật khẩu gốc.
+
+-- Sản phẩm — thêm/sửa/xoá ở /admin/products. Mỗi dòng giữ nguyên 1 object RawProduct
+-- (xem lib/data/products.ts) trong cột "data". Bảng trống thì vào /admin/products bấm
+-- "Nhập sản phẩm mẫu" để chép các sản phẩm đang viết sẵn trong code vào đây.
+create table if not exists products (
+  handle text primary key,
+  created_at timestamptz not null default now(),
+  data jsonb not null
+);
+
+-- Ảnh sản phẩm upload từ trang admin — bucket công khai để trang web hiển thị trực tiếp.
+insert into storage.buckets (id, name, public) values ('products', 'products', true)
+on conflict (id) do nothing;

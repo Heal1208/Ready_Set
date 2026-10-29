@@ -7,7 +7,8 @@ import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { IconClose, IconSearch } from "@/components/ui/icons";
 import { Placeholder } from "@/components/ui/Placeholder";
-import { normalize, searchProducts } from "@/lib/data/products";
+import { filterProducts, normalize } from "@/lib/utils/productSearch";
+import type { Product } from "@/lib/types";
 import { navCollections } from "@/lib/data/collections";
 import { formatPrice } from "@/lib/utils/formatPrice";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
@@ -15,12 +16,12 @@ import { useLocale } from "@/lib/i18n/LocaleProvider";
 export function SearchOverlay({
   isOpen,
   onClose,
-  productPhotos = {},
+  products = [],
 }: {
   isOpen: boolean;
   onClose: () => void;
-  /** handle -> danh sách ảnh thật, đọc sẵn ở server và truyền xuống (xem app/(shop)/layout.tsx) — ô này chạy ở client nên không tự đọc file ảnh được. */
-  productPhotos?: Record<string, string[]>;
+  /** Toàn bộ sản phẩm kèm ảnh thật, đọc sẵn ở server và truyền xuống (xem app/(shop)/layout.tsx) — ô này chạy ở client nên không tự đọc DB/file ảnh được. */
+  products?: Product[];
 }) {
   const router = useRouter();
   const { dict: t } = useLocale();
@@ -42,7 +43,7 @@ export function SearchOverlay({
   }, [isOpen, onClose]);
 
   const showSuggestions = query.trim().length >= 2;
-  const productMatches = showSuggestions ? searchProducts(query, 6) : [];
+  const productMatches = showSuggestions ? filterProducts(products, query, 6) : [];
   const collectionMatches = showSuggestions
     ? navCollections.filter((c) => normalize(c.title).includes(normalize(query))).slice(0, 3)
     : [];
@@ -93,7 +94,7 @@ export function SearchOverlay({
                     <p className="nav-link mb-4 text-ink-60">{t.search.products}</p>
                     <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
                       {productMatches.map((p) => {
-                        const photo = productPhotos[p.handle]?.[0];
+                        const photo = p.photos?.[0];
                         return (
                           <Link key={p.id} href={`/products/${p.handle}`} onClick={onClose} className="group">
                             <div className="relative aspect-[3/4] w-full overflow-hidden bg-bg-alt">

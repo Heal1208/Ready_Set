@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, useAnimation } from "framer-motion";
+import type { Product } from "@/lib/types";
 import { useEffect, useRef, useState } from "react";
 import { IconBag, IconMenu, IconSearch, IconUser } from "@/components/ui/icons";
 import { useCart } from "@/lib/store/cart-context";
@@ -15,11 +16,11 @@ import { SearchOverlay } from "@/components/layout/SearchOverlay";
 export function Header({
   isLoggedIn = false,
   collectionCovers = {},
-  productPhotos = {},
+  products = [],
 }: {
   isLoggedIn?: boolean;
   collectionCovers?: Record<string, string | null>;
-  productPhotos?: Record<string, string[]>;
+  products?: Product[];
 }) {
   const pathname = usePathname();
   const isHome = pathname === "/";
@@ -81,7 +82,7 @@ export function Header({
         ) : null}
         <header
           className={`grid h-14 grid-cols-[1fr_auto_1fr] items-center px-4 transition-colors duration-300 md:h-16 md:px-8 ${
-            transparent ? "bg-transparent text-white" : "bg-ink text-white"
+            transparent ? "bg-transparent text-ink" : "bg-ink text-white"
           }`}
         >
           <button aria-label={t.header.openMenu} onClick={() => setNavOpen(true)} className="justify-self-start p-1.5">
@@ -93,7 +94,7 @@ export function Header({
               <span aria-hidden />
             ) : (
               <Link href="/" aria-label={t.header.homeLink}>
-                <Image src="/images/logo/logo-white.png" alt="25 O'Clock" width={362} height={70} className="h-4 w-auto md:h-5" priority />
+                <Image src="/images/logo/logo-white.png" alt="Ready Set" width={1000} height={1000} className="h-8 w-auto md:h-9" priority />
               </Link>
             )}
           </div>
@@ -126,7 +127,7 @@ export function Header({
           setSearchOpen(true);
         }}
       />
-      <SearchOverlay isOpen={searchOpen} onClose={() => setSearchOpen(false)} productPhotos={productPhotos} />
+      <SearchOverlay isOpen={searchOpen} onClose={() => setSearchOpen(false)} products={products} />
     </>
   );
 }

@@ -44,7 +44,7 @@ export default async function CollectionPage({ params, searchParams }: Props) {
   if (!collection) notFound();
 
   const sort = sp.sort === "price-desc" ? "price-desc" : "price-asc";
-  const items = withPhotosList(sortProducts(getProductsByCollection(handle), sort));
+  const items = withPhotosList(sortProducts(await getProductsByCollection(handle), sort));
   const t = await getT();
   const content = t.collection.content[handle];
   const title = content?.title ?? collection.title;

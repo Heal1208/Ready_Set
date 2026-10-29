@@ -16,7 +16,7 @@ import { CUSTOMER_COOKIE_NAME, verifySessionToken } from "@/lib/auth/customer";
 import { navCollections } from "@/lib/data/collections";
 import { getAllProducts } from "@/lib/data/products";
 import { getCollectionCovers } from "@/lib/utils/collectionImages";
-import { getProductPhotosMap } from "@/lib/utils/productImages";
+import { withPhotosList } from "@/lib/utils/productImages";
 
 export default async function ShopLayout({ children }: { children: React.ReactNode }) {
   // Chỉ kiểm tra chữ ký cookie (không gọi DB) — đủ để biết còn đăng nhập hay không,
@@ -24,9 +24,9 @@ export default async function ShopLayout({ children }: { children: React.ReactNo
   const store = await cookies();
   const isLoggedIn = Boolean(verifySessionToken(store.get(CUSTOMER_COOKIE_NAME)?.value));
   const collectionCovers = getCollectionCovers(navCollections.map((c) => c.handle));
-  // Đọc trước ảnh thật của tất cả sản phẩm ở server, truyền xuống cho ô tìm
-  // kiếm (chạy ở client, không tự đọc file ảnh được) — xem SearchOverlay.tsx.
-  const productPhotos = getProductPhotosMap(getAllProducts().map((p) => p.handle));
+  // Đọc trước sản phẩm (kèm ảnh thật) ở server, truyền xuống cho ô tìm kiếm
+  // (chạy ở client, không tự đọc DB/file ảnh được) — xem SearchOverlay.tsx.
+  const searchProducts = withPhotosList(await getAllProducts());
   const locale = await getLocale();
   const localeChosen = await hasChosenLocale();
 
@@ -35,7 +35,7 @@ export default async function ShopLayout({ children }: { children: React.ReactNo
       <CartProvider>
         <NavigationHistoryTracker />
         <LanguagePopup />
-        <Header isLoggedIn={isLoggedIn} collectionCovers={collectionCovers} productPhotos={productPhotos} />
+        <Header isLoggedIn={isLoggedIn} collectionCovers={collectionCovers} products={searchProducts} />
         <MainOffset>
           <PageTransition>{children}</PageTransition>
         </MainOffset>
