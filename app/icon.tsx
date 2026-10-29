@@ -5,7 +5,7 @@ export const contentType = "image/png";
 
 // Icon tab trình duyệt / kết quả Google — trước đây web KHÔNG có file này nên trình
 // duyệt/Google tự hiện icon "địa cầu" mặc định thay chỗ trống. Nền đen (#0a0a09, cùng
-// tông "ink" dùng khắp site) + số "25" trắng đậm — đơn giản, đọc rõ ở kích cỡ rất nhỏ.
+// tông "ink" dùng khắp site) + chữ "RS" trắng đậm (theo logo huy hiệu RS) — đơn giản, đọc rõ ở kích cỡ rất nhỏ.
 export default function Icon() {
   return new ImageResponse(
     (
@@ -23,7 +23,7 @@ export default function Icon() {
           letterSpacing: -1,
         }}
       >
-        25
+        RS
       </div>
     ),
     { ...size },

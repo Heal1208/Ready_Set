@@ -5,7 +5,7 @@
 # giá trị thật vào đây.
 services:
   - type: web
-    name: 25oclock-web
+    name: readyset-web
     runtime: node
     plan: free
     buildCommand: npm install && npm run build

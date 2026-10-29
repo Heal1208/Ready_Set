@@ -17,15 +17,15 @@ const freeShippingLineEn = `Free shipping on orders over ${formatPrice({ amount:
 export const staticPages: StaticPage[] = [
   {
   slug: "about",
-title: "Về 25 O'CLOCK",
+title: "Về READY SET",
 intro:
-  "25 o'clock là giờ không có trên đồng hồ — khoảng thời gian bạn dành cho riêng mình.",
+  "Ready Set đến từ câu \"Ready, set, go!\" — quần áo giúp bạn luôn mát mẻ và sẵn sàng ra ngoài, đến lớp hay đi thực tập, kể cả những ngày nóng nhất.",
 sections: [
   {
     heading: "Câu chuyện",
     paragraphs: [
-      "25 o'clock bắt đầu năm 2025 tại Hà Nội, từ một người thích quần áo và muốn chia sẻ điều đó bằng sản phẩm thay vì bằng lời nói.",
-      "Denim là thứ 25 o'clock chọn làm chất liệu chính và đại diện cho brand. Mỗi đợt sản phẩm đều có một số lượng nhất định để có thể kiểm soát được chất lượng tốt nhất trước khi đến tay khách hàng.",
+      "Ready Set bắt đầu năm 2025 tại Hà Nội, từ một người thích quần áo và muốn chia sẻ điều đó bằng sản phẩm thay vì bằng lời nói.",
+      "Denim là thứ Ready Set chọn làm chất liệu chính và đại diện cho brand. Mỗi đợt sản phẩm đều có một số lượng nhất định để có thể kiểm soát được chất lượng tốt nhất trước khi đến tay khách hàng.",
     ],
   },
 ],
@@ -71,7 +71,7 @@ sections: [
       {
         heading: "Vận chuyển quốc tế",
         paragraphs: [
-          "Đối với các đơn hàng quốc tế vui lòng liên hệ qua trang instagram của 25 O'CLOCK để được tư vấn cũng như hỗ trợ một cách chi tiết.",
+          "Đối với các đơn hàng quốc tế vui lòng liên hệ qua trang instagram của READY SET để được tư vấn cũng như hỗ trợ một cách chi tiết.",
         ],
       },
       {
@@ -92,14 +92,14 @@ sections: [
 export const staticPagesEn: StaticPage[] = [
   {
     slug: "about",
-    title: "About 25 O'CLOCK",
-    intro: "25 o'clock is the hour that doesn't exist on a clock — the time you keep just for yourself.",
+    title: "About READY SET",
+    intro: "Ready Set comes from \"Ready, set, go!\" — clothes that keep you cool and ready to head out, go to class or your internship, even on the hottest days.",
     sections: [
       {
         heading: "Our Story",
         paragraphs: [
-          "25 o'clock started in 2025 in Hanoi, from someone who loved clothes and wanted to share that through product rather than words.",
-          "Denim is the material 25 o'clock chose as its core and its signature. Every drop is made in a limited quantity so we can control quality as closely as possible before it reaches you.",
+          "Ready Set started in 2025 in Hanoi, from someone who loved clothes and wanted to share that through product rather than words.",
+          "Denim is the material Ready Set chose as its core and its signature. Every drop is made in a limited quantity so we can control quality as closely as possible before it reaches you.",
         ],
       },
     ],
@@ -141,7 +141,7 @@ export const staticPagesEn: StaticPage[] = [
       },
       {
         heading: "International shipping",
-        paragraphs: ["For international orders, please reach out via 25 O'CLOCK's Instagram for detailed support."],
+        paragraphs: ["For international orders, please reach out via READY SET's Instagram for detailed support."],
       },
       {
         heading: "Returns & exchanges",

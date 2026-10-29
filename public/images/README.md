@@ -1,4 +1,4 @@
-# Thư mục ảnh — 25 o'clock
+# Thư mục ảnh — Ready Set
 
 Đây là nơi lưu ảnh thật để thay thế cho khối màu placeholder đang hiển thị trên site
 (`components/ui/Placeholder.tsx`). Cứ thả đúng file vào đúng thư mục/tên bên dưới —

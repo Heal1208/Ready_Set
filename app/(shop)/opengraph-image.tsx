@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { getHeroImages } from "@/lib/utils/heroImage";
 
-export const alt = "25 O'Clock";
+export const alt = "Ready Set";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -37,10 +37,9 @@ export default async function Image() {
     toDataUri("/images/logo/logo-black.png"),
   ]);
 
-  // Cùng tỉ lệ logo/khung như trên web: HeroLogo rộng "38vw" ở desktop (mục 6.1) — tức
-  // ~38% bề ngang khung hero. Logo gốc 3000×580px (≈5.17:1).
-  const logoWidth = Math.round(size.width * 0.38);
-  const logoHeight = Math.round(logoWidth / (3000 / 580));
+  // Logo tròn vuông 1:1 (1000×1000px) — ~16% bề ngang khung, giống HeroLogo "16vw" ở desktop.
+  const logoWidth = Math.round(size.width * 0.16);
+  const logoHeight = logoWidth;
 
   return new ImageResponse(
     (
@@ -60,7 +59,7 @@ export default async function Image() {
           // 2 bên (khác thumbnail cũ dùng "contain").
           <img src={heroSrc} width={size.width} height={size.height} style={{ objectFit: "cover" }} />
         ) : (
-          <div style={{ fontSize: 96, fontWeight: 700, letterSpacing: 4, color: "#ffffff" }}>25 O&apos;CLOCK</div>
+          <div style={{ fontSize: 96, fontWeight: 700, letterSpacing: 4, color: "#ffffff" }}>READY SET</div>
         )}
 
         {logoSrc && heroSrc ? (

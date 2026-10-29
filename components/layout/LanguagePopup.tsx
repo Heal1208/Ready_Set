@@ -29,7 +29,7 @@ export function LanguagePopup() {
             transition={{ duration: 0.25, ease: "easeOut" }}
             className="w-full max-w-sm bg-bg px-8 py-10 text-center"
           >
-            <p className="text-[13px] uppercase tracking-[0.2em] text-ink-60">25 O&apos;Clock</p>
+            <p className="text-[13px] uppercase tracking-[0.2em] text-ink-60">Ready Set</p>
             <p className="mt-3 text-[20px] font-medium uppercase tracking-[0.04em] text-ink">Choose your language</p>
             <p className="mt-1.5 text-[13px] text-ink-60">Chọn ngôn ngữ hiển thị bạn muốn xem</p>
 

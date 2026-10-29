@@ -107,7 +107,7 @@ export function CampaignSlideshow({ images, startIndex }: { images: string[]; st
           >
             <Image
               src={src}
-              alt={`Lookbook — 25 o'clock ${i + 1}`}
+              alt={`Lookbook — Ready Set ${i + 1}`}
               fill
               sizes="(min-width: 768px) 29vw, (min-width: 640px) 41vw, 55vw"
               priority={dist <= 1}

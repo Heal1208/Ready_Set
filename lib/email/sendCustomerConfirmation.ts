@@ -7,7 +7,7 @@ import type { Order } from "@/lib/types";
  * Gửi email báo khách "đơn hàng đã được xác nhận" — CẦN domain đã xác minh trên Resend,
  * vì đích gửi là email của khách (khác nhau mỗi đơn), không phải email chủ tài khoản
  * Resend. Set RESEND_CUSTOMER_FROM trong .env.local (ví dụ:
- * "25 o'clock <noreply@25oclockhome.com>") sau khi xác minh domain tại resend.com/domains.
+ * "Ready Set <noreply@25oclockhome.com>") sau khi xác minh domain tại resend.com/domains.
  *
  * Chưa cấu hình thì hàm này bỏ qua, trả về false — trang admin sẽ nhắc bạn tự báo
  * khách qua Zalo/điện thoại.
@@ -34,10 +34,10 @@ export async function sendCustomerConfirmation(order: Order): Promise<boolean> {
     <div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#111;max-width:480px">
       <h2 style="margin:0 0 12px">Đơn hàng #${escapeHtml(order.id)} đã được xác nhận</h2>
       <p>Chào ${escapeHtml(order.customer.name)},</p>
-      <p>25 o'clock đã nhận được thanh toán và xác nhận đơn hàng của bạn. Đơn sẽ được chuẩn bị và giao trong thời gian sớm nhất.</p>
+      <p>Ready Set đã nhận được thanh toán và xác nhận đơn hàng của bạn. Đơn sẽ được chuẩn bị và giao trong thời gian sớm nhất.</p>
       <p style="margin-top:16px">${itemsText}</p>
       <p style="margin-top:12px"><strong>Tổng cộng: ${formatPrice(order.total)}</strong></p>
-      <p style="margin-top:20px;color:#666">Cảm ơn bạn đã mua sắm cùng 25 o'clock.</p>
+      <p style="margin-top:20px;color:#666">Cảm ơn bạn đã mua sắm cùng Ready Set.</p>
     </div>`;
 
   try {

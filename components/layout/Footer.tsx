@@ -56,7 +56,7 @@ export function Footer() {
         <div className="container-25 flex flex-col gap-3 py-6 text-[12px] text-white/60 md:flex-row md:items-center md:justify-between">
           <p>Email: {company.email}</p>
           <div className="flex items-center gap-4">
-            <span>© {new Date().getFullYear()} 25 o&apos;clock</span>
+            <span>© {new Date().getFullYear()} Ready Set</span>
           </div>
         </div>
       </div>

@@ -14,7 +14,7 @@
  * Không lưu "note" (ghi chú đơn) — ghi chú thường riêng theo từng đơn, không nên tự
  * lặp lại ghi chú của đơn trước.
  */
-const STORAGE_KEY = "25oclock:lastOrderInfo";
+const STORAGE_KEY = "readyset:lastOrderInfo";
 
 export type LastOrderInfo = {
   email: string;

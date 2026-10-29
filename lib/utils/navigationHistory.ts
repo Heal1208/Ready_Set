@@ -14,7 +14,7 @@
  * Dùng sessionStorage (không phải cookie/localStorage) — tự tách riêng theo từng tab,
  * đúng ý nghĩa "lịch sử điều hướng CỦA TAB NÀY", và tự hết khi đóng tab.
  */
-const FLAG_KEY = "25oclock:navigated";
+const FLAG_KEY = "readyset:navigated";
 
 export function markNavigated() {
   try {

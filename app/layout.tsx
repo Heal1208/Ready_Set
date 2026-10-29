@@ -18,14 +18,14 @@ export async function generateMetadata(): Promise<Metadata> {
     metadataBase: new URL("https://25oclockhome.com"),
     title: {
       default: t.site.titleDefault,
-      template: "%s · 25 O'Clock",
+      template: "%s · Ready Set",
     },
     description: t.site.description,
     // Canonical cho trang chủ — tránh Google coi "/" và "/?utm_..." (link quảng cáo/mạng
     // xã hội có tham số theo dõi) là 2 trang nội dung trùng nhau.
     alternates: { canonical: "/" },
     openGraph: {
-      title: "25 O'Clock",
+      title: "Ready Set",
       description: t.site.ogDescription,
       type: "website",
       locale: locale === "en" ? "en_US" : "vi_VN",
@@ -35,9 +35,9 @@ export async function generateMetadata(): Promise<Metadata> {
 
 /**
  * JSON-LD "Organization" — giúp Google hiểu đây là 1 thương hiệu thật (không phải chỉ
- * 1 trang web bất kỳ), gắn tên "25 O'Clock" với đúng domain này. "alternateName" liệt
+ * 1 trang web bất kỳ), gắn tên "Ready Set" với đúng domain này. "alternateName" liệt
  * kê các cách gõ khác của tên thương hiệu (không dấu, viết liền...) — tăng khả năng
- * khớp khi khách tìm "25oclock" thay vì gõ đúng "25 O'Clock". "sameAs" trỏ sang
+ * khớp khi khách tìm "readyset" thay vì gõ đúng "Ready Set". "sameAs" trỏ sang
  * Instagram chính chủ — Google dùng để xác thực đây đúng là cùng 1 thương hiệu, không
  * phải hàng giả/trang giả mạo (nhất là khi có vài cái tên gần giống đã tồn tại sẵn).
  * "description" là slogan thương hiệu — giữ nguyên tiếng Anh ở cả 2 ngôn ngữ (lựa chọn
@@ -46,11 +46,11 @@ export async function generateMetadata(): Promise<Metadata> {
 const organizationJsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  name: "25 O'Clock",
-  alternateName: ["25oclock", "25 oclock", "25OClock", "25oclock.home"],
+  name: "Ready Set",
+  alternateName: ["readyset", "ReadySet", "Ready-Set"],
   url: "https://25oclockhome.com",
   logo: "https://25oclockhome.com/images/logo/logo-black.png",
-  description: "Denim is the material 25 o'clock chose as its core and its signature.",
+  description: "Denim is the material Ready Set chose as its core and its signature.",
   sameAs: [company.instagram.url],
 };
 

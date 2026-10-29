@@ -32,7 +32,7 @@ type CartContextValue = {
   dismissToast: () => void;
 };
 
-const STORAGE_KEY = "25oclock:cart";
+const STORAGE_KEY = "readyset:cart";
 const TOAST_DURATION = 2800;
 
 const CartContext = createContext<CartContextValue | null>(null);

@@ -16,11 +16,11 @@ export function HeroLogo({ variant = "black" }: { variant?: "black" | "white" })
     >
       <Image
         src={`/images/logo/logo-${variant}.png`}
-        alt="25 O'Clock"
-        width={3000}
-        height={580}
+        alt="Ready Set"
+        width={1000}
+        height={1000}
         priority
-        className="w-[78vw] sm:w-[58vw] md:w-[38vw]"
+        className="w-[40vw] sm:w-[28vw] md:w-[16vw]"
       />
     </motion.div>
   );

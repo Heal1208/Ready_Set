@@ -60,7 +60,7 @@ const HANOI_PROVINCE_CODE = 1;
 // sessionStorage (không phải localStorage) vì đây là dữ liệu TẠM cho phiên duyệt web
 // hiện tại — đóng hẳn tab/trình duyệt thì tự xoá, không lưu thông tin cá nhân mãi mãi.
 // Xoá đi ngay sau khi đặt hàng thành công (xem handleSubmit).
-const DRAFT_STORAGE_KEY = "25oclock:checkoutDraft";
+const DRAFT_STORAGE_KEY = "readyset:checkoutDraft";
 
 type CheckoutDraft = {
   customer: typeof EMPTY_CUSTOMER;

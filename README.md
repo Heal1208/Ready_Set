@@ -1,6 +1,6 @@
-# 25 o'clock — Website thương mại điện tử
+# Ready Set — Website thương mại điện tử
 
-Website bán hàng cho brand thời trang **25 o'clock**, dựng theo bản mô tả dự án:
+Website bán hàng cho brand thời trang **Ready Set**, dựng theo bản mô tả dự án:
 phong cách "gallery tối giản", nền kem `#EBECE6`,
 header đen, một font sans-serif duy nhất, ảnh sản phẩm tỉ lệ 3:4, không đổ bóng, không bo góc.
 

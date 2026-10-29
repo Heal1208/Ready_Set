@@ -38,7 +38,7 @@ const dictionaries = {
       account: "Tài khoản",
       login: "Đăng nhập",
       cart: "Giỏ hàng",
-      homeLink: "25 O'Clock — về trang chủ",
+      homeLink: "Ready Set — về trang chủ",
     },
     nav: {
       shop: "Shop",
@@ -48,7 +48,7 @@ const dictionaries = {
       sizeGuide: "Hướng dẫn chọn size",
       contact: "Liên hệ",
       shippingReturns: "Vận chuyển & đổi trả",
-      about: "Về 25 O'clock",
+      about: "Về Ready Set",
       instagram: "Instagram",
       subscribe: "Đăng ký nhận tin",
       subscribeBlurb: "Sản phẩm mới, lookbook và ưu đãi — gửi thẳng vào email của bạn.",
@@ -71,7 +71,7 @@ const dictionaries = {
     },
     home: {
       newArrivals: "Sản phẩm mới",
-      followUs: "Theo dõi 25 o'clock",
+      followUs: "Theo dõi Ready Set",
     },
     product: {
       size: "Size",
@@ -120,7 +120,7 @@ const dictionaries = {
       // Ghi đè tiêu đề/mô tả danh mục theo handle — nguồn gốc tiếng Việt ở lib/data/collections.ts,
       // đây chỉ là bản dịch song song cho tiếng Anh (xem app/(shop)/collections/[handle]/page.tsx).
       content: {
-        all: { title: "Tất cả sản phẩm", description: "Toàn bộ sản phẩm hiện có của 25 o'clock." },
+        all: { title: "Tất cả sản phẩm", description: "Toàn bộ sản phẩm hiện có của Ready Set." },
         tops: { title: "Tops", description: "Áo thun, sơ mi, hoodie, áo len." },
         bottoms: { title: "Bottoms", description: "Quần denim, quần vải, quần cargo." },
         accessories: { title: "Accessories", description: "Mũ, nón, phụ kiện đi kèm." },
@@ -242,20 +242,20 @@ const dictionaries = {
       sendMessage: "Gửi tin nhắn",
       messageContent: "Nội dung liên hệ",
       submit: "Gửi liên hệ",
-      thankYou: "Cảm ơn bạn đã liên hệ, 25 o'clock sẽ phản hồi trong 24 giờ làm việc.",
+      thankYou: "Cảm ơn bạn đã liên hệ, Ready Set sẽ phản hồi trong 24 giờ làm việc.",
     },
     lookbook: {
-      description1: "Phản hồi và hình ảnh thực tế từ khách hàng 25 o'clock.",
-      description2: "Hình ảnh chiến dịch của 25 o'clock.",
-      description3: "Hình ảnh chiến dịch của 25 o'clock.",
+      description1: "Phản hồi và hình ảnh thực tế từ khách hàng Ready Set.",
+      description2: "Hình ảnh chiến dịch của Ready Set.",
+      description3: "Hình ảnh chiến dịch của Ready Set.",
       noImages: "Chưa có ảnh nào — quay lại sau nhé.",
       viewImage: (n: number) => `Xem ảnh ${n}`,
       customerPhotoAlt: (n: number) => `Lookbook khách hàng ${n}`,
     },
     site: {
-      titleDefault: "25 O'Clock",
-      description: "Denim is the material 25 o'clock chose as its core and its signature.",
-      ogDescription: "Denim is the material 25 o'clock chose as its core and its signature.",
+      titleDefault: "Ready Set",
+      description: "Denim is the material Ready Set chose as its core and its signature.",
+      ogDescription: "Denim is the material Ready Set chose as its core and its signature.",
     },
     languagePopup: {
       heading: "Chọn ngôn ngữ",
@@ -295,7 +295,7 @@ const dictionaries = {
       account: "Account",
       login: "Log in",
       cart: "Cart",
-      homeLink: "25 O'Clock — back to home",
+      homeLink: "Ready Set — back to home",
     },
     nav: {
       shop: "Shop",
@@ -305,7 +305,7 @@ const dictionaries = {
       sizeGuide: "Size Guide",
       contact: "Contact",
       shippingReturns: "Shipping & Returns",
-      about: "About 25 O'clock",
+      about: "About Ready Set",
       instagram: "Instagram",
       subscribe: "Newsletter",
       subscribeBlurb: "New arrivals, lookbooks and offers — straight to your inbox.",
@@ -328,7 +328,7 @@ const dictionaries = {
     },
     home: {
       newArrivals: "New Arrivals",
-      followUs: "Follow 25 o'clock",
+      followUs: "Follow Ready Set",
     },
     product: {
       size: "Size",
@@ -373,7 +373,7 @@ const dictionaries = {
       sortPriceDesc: "Price: high to low",
       noProducts: "No matching products.",
       content: {
-        all: { title: "All Products", description: "Everything 25 o'clock currently has in stock." },
+        all: { title: "All Products", description: "Everything Ready Set currently has in stock." },
         tops: { title: "Tops", description: "T-shirts, shirts, hoodies, sweaters." },
         bottoms: { title: "Bottoms", description: "Denim, trousers, cargo pants." },
         accessories: { title: "Accessories", description: "Hats, caps, and accessories." },
@@ -495,20 +495,20 @@ const dictionaries = {
       sendMessage: "Send a message",
       messageContent: "Your message",
       submit: "Send message",
-      thankYou: "Thanks for reaching out — 25 o'clock will get back to you within 24 business hours.",
+      thankYou: "Thanks for reaching out — Ready Set will get back to you within 24 business hours.",
     },
     lookbook: {
-      description1: "Feedback and real photos from 25 o'clock customers.",
-      description2: "Campaign photos from 25 o'clock.",
-      description3: "Campaign photos from 25 o'clock.",
+      description1: "Feedback and real photos from Ready Set customers.",
+      description2: "Campaign photos from Ready Set.",
+      description3: "Campaign photos from Ready Set.",
       noImages: "No photos yet — check back soon.",
       viewImage: (n: number) => `View image ${n}`,
       customerPhotoAlt: (n: number) => `Customer lookbook ${n}`,
     },
     site: {
-      titleDefault: "25 O'Clock",
-      description: "Denim is the material 25 o'clock chose as its core and its signature.",
-      ogDescription: "Denim is the material 25 o'clock chose as its core and its signature.",
+      titleDefault: "Ready Set",
+      description: "Denim is the material Ready Set chose as its core and its signature.",
+      ogDescription: "Denim is the material Ready Set chose as its core and its signature.",
     },
     languagePopup: {
       heading: "Choose your language",
