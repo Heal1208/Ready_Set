@@ -30,12 +30,12 @@ function makeVariants(
     price,
     compareAtPrice,
     available: !unavailableSizes.includes(size),
-    sku: `25OC-${handle.toUpperCase()}-${size}`.slice(0, 24),
+    sku: `RS-${handle.toUpperCase()}-${size}`.slice(0, 24),
   }));
 }
 
-// Số đo thật, đo trên sản phẩm (bảng size chính thức của Sample 02 — chỉ có M/L).
-const SAMPLE_02_SIZE_CHART: SizeChartRow[] = [
+// Số đo thật, đo trên sản phẩm (bảng size chính thức của Faded Grey Tee — chỉ có M/L).
+const FADED_GREY_TEE_SIZE_CHART: SizeChartRow[] = [
   { size: "M", length: "77 cm", width: "61 cm" },
   { size: "L", length: "82 cm", width: "64 cm" },
 ];
@@ -195,42 +195,37 @@ export const SEED_PRODUCTS: RawProduct[] = [
     ],
   },
   {
-    code: "S02",
-    title: "SAMPLE 02 T-SHIRT",
-    handle: "sample-02-t-shirt",
+    code: "FGT",
+    title: "FADED GREY OVERSIZED T-SHIRT",
+    handle: "faded-grey-oversized-t-shirt",
     category: "Tops",
-    tags: ["cotton", "tee", "sample"],
+    tags: ["cotton", "tee"],
     price: 460000,
     tones: ["sand", "ink", "sand"],
     labels: ["FRONT", "ON MODEL", "DETAIL"],
     sizes: ["M", "L"],
     unavailableSizes: [], // ví dụ: ["M"] nếu hết size M
-    sizeChart: SAMPLE_02_SIZE_CHART,
+    sizeChart: FADED_GREY_TEE_SIZE_CHART,
     material: "Cotton 220gsm",
     materialEn: "220gsm cotton",
-    care: "Giặt máy nước lạnh, lộn trái trước khi giặt / Machine wash cold, inside out",
+    care: "Giặt máy nước lạnh, lộn trái trước khi giặt",
     careEn: "Machine wash cold, inside out",
     fit: "Regular",
-    // TODO: điền đúng chiều cao/cân nặng/size model thật khi có — "..." cũ hiện
-    // nguyên văn ra trang Hướng dẫn chọn size, trông như lỗi.
-    modelInfo: "Đang cập nhật",
-    modelInfoEn: "Updating soon",
+    // Chưa có số đo model thật — để trống thì giao diện tự ẩn dòng này (SizeGuideDrawer).
+    modelInfo: "",
+    modelInfoEn: "",
     collections: ["all", "tops", "new"],
     createdAt: "2026-08-25",
     details: [
       "Màu: Xám (Grey)",
       "Form: Oversized",
       "Chất liệu đã xử lý, hạn chế co rút",
-      "Zipper tape được xử lý bọc viền tỉ mỉ",
-      "Cúc kim loại donut READY SET",
       "Hình in hiệu ứng faded & cracked",
     ],
     detailsEn: [
       "Color: Grey",
       "Fit: Oversized",
       "Pre-treated fabric, resists shrinking",
-      "Zipper tape carefully edge-bound",
-      "READY SET donut metal button",
       "Faded & cracked print effect",
     ],
   },
@@ -246,11 +241,10 @@ export const SEED_PRODUCTS: RawProduct[] = [
     sizes: SIZE_SETS.onesize,
     unavailableSizes: [], // freesize nên chỉ có 1 size — hết hàng thì dùng "soldOut: true" ở dưới thay vì mục này
     sizeChart: [],
-    // TODO: cập nhật đúng chất liệu/hướng dẫn bảo quản thật khi có — để tạm tránh ghi sai thông tin.
     material: "Len dệt mềm",
     materialEn: "Soft knit wool",
-    care: "Đang cập nhật",
-    careEn: "Updating soon",
+    care: "Giặt tay nước lạnh, phơi khô tự nhiên",
+    careEn: "Hand wash cold, dry flat",
     fit: "Regular",
     modelInfo: "Freesize, phù hợp với đa số vòng đầu.",
     modelInfoEn: "One-size, fits most head sizes.",
@@ -258,11 +252,11 @@ export const SEED_PRODUCTS: RawProduct[] = [
     createdAt: "2026-09-04",
     details: [
       "Màu: Đen (Black)",
-      "Len dệt mềm, co giãn tốt, thoáng không ngứa, logo thêu OnlyFriends/Ready Set, kim băng đính kèm, unisex.",
+      "Len dệt mềm, co giãn tốt, thoáng không ngứa, logo thêu Ready Set, kim băng đính kèm, unisex.",
     ],
     detailsEn: [
       "Color: Black",
-      "Soft knit wool, stretchy, breathable and non-itchy, embroidered OnlyFriends/Ready Set logo, pin included, unisex.",
+      "Soft knit wool, stretchy, breathable and non-itchy, embroidered Ready Set logo, pin included, unisex.",
     ],
   },
 ];

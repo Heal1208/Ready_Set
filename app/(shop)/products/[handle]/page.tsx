@@ -33,6 +33,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: product.title,
     description: (locale === "en" && product.descriptionEn) || product.descriptionVi,
+    alternates: { canonical: `/products/${product.handle}` },
     openGraph: photos[0] ? { images: [{ url: photos[0] }] } : undefined,
     twitter: photos[0] ? { card: "summary_large_image", images: [photos[0]] } : undefined,
   };
@@ -50,7 +51,7 @@ export default async function ProductPage({ params, searchParams }: Props) {
   const productWithPhotos = withPhotos(product);
   const photos = productWithPhotos.photos!;
   const selectedVariant = product.variants.find((v) => v.id === variant) ?? product.variants[0];
-  const canonicalUrl = `https://25oclockhome.com/products/${product.handle}`;
+  const canonicalUrl = `${company.siteUrl}/products/${product.handle}`;
   const t = await getT();
   const locale = await getLocale();
   // Dữ liệu sản phẩm (chất liệu/bảo quản/nơi sản xuất/mô tả model/gạch đầu dòng) có bản
@@ -98,7 +99,7 @@ export default async function ProductPage({ params, searchParams }: Props) {
         </nav>
       </div>
 
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-[60%_40%] md:gap-12">
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-[3fr_2fr] md:gap-12">
         <Gallery photos={photos} images={product.images} code={product.code} alt={product.title} />
 
         {/* z-40: "md:sticky" tự tạo 1 lớp xếp chồng mới bao quanh cả cột này (kể cả

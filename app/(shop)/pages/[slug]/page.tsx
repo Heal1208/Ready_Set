@@ -40,16 +40,22 @@ export default async function StaticPageRoute({ params }: Props) {
             <dl className="space-y-3 text-[14px]">
               <div>
                 <dt className="text-ink-60">Email</dt>
-                <dd>{company.email}</dd>
-              </div>
-              <div>
-                <dt className="text-ink-60">{t.contact.socialMedia}</dt>
-                <dd className="space-x-3">
-                  <a href={company.instagram.url} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">
-                    Instagram
+                <dd>
+                  <a href={`mailto:${company.email}`} className="underline underline-offset-2">
+                    {company.email}
                   </a>
                 </dd>
               </div>
+              {company.instagram ? (
+                <div>
+                  <dt className="text-ink-60">{t.contact.socialMedia}</dt>
+                  <dd className="space-x-3">
+                    <a href={company.instagram.url} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">
+                      Instagram
+                    </a>
+                  </dd>
+                </div>
+              ) : null}
             </dl>
           </div>
 

@@ -15,15 +15,12 @@ export async function generateMetadata(): Promise<Metadata> {
   const t = await getT();
   const locale = await getLocale();
   return {
-    metadataBase: new URL("https://25oclockhome.com"),
+    metadataBase: new URL(company.siteUrl),
     title: {
       default: t.site.titleDefault,
       template: "%s · Ready Set",
     },
     description: t.site.description,
-    // Canonical cho trang chủ — tránh Google coi "/" và "/?utm_..." (link quảng cáo/mạng
-    // xã hội có tham số theo dõi) là 2 trang nội dung trùng nhau.
-    alternates: { canonical: "/" },
     openGraph: {
       title: "Ready Set",
       description: t.site.ogDescription,
@@ -38,8 +35,7 @@ export async function generateMetadata(): Promise<Metadata> {
  * 1 trang web bất kỳ), gắn tên "Ready Set" với đúng domain này. "alternateName" liệt
  * kê các cách gõ khác của tên thương hiệu (không dấu, viết liền...) — tăng khả năng
  * khớp khi khách tìm "readyset" thay vì gõ đúng "Ready Set". "sameAs" trỏ sang
- * Instagram chính chủ — Google dùng để xác thực đây đúng là cùng 1 thương hiệu, không
- * phải hàng giả/trang giả mạo (nhất là khi có vài cái tên gần giống đã tồn tại sẵn).
+ * Instagram chính chủ (chỉ khi company.instagram có giá trị).
  * "description" là slogan thương hiệu — giữ nguyên tiếng Anh ở cả 2 ngôn ngữ (lựa chọn
  * thương hiệu, không phải dịch), đồng bộ với "site.description" trong dictionary.ts.
  */
@@ -48,10 +44,10 @@ const organizationJsonLd = {
   "@type": "Organization",
   name: "Ready Set",
   alternateName: ["readyset", "ReadySet", "Ready-Set"],
-  url: "https://25oclockhome.com",
-  logo: "https://25oclockhome.com/images/logo/logo-black.png",
+  url: company.siteUrl,
+  logo: `${company.siteUrl}/images/logo/logo-black.png`,
   description: "Denim is the material Ready Set chose as its core and its signature.",
-  sameAs: [company.instagram.url],
+  sameAs: company.instagram ? [company.instagram.url] : [],
 };
 
 /**

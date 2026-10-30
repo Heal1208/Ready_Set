@@ -1,4 +1,4 @@
-Ảnh cho sản phẩm: **SAMPLE 02 T-SHIRT**
+Ảnh cho sản phẩm: **FADED GREY OVERSIZED T-SHIRT**
 
 Tỉ lệ 3:4, cạnh dài ≥ 2000px, nền thống nhất giữa các ảnh.
 

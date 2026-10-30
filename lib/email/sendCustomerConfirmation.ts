@@ -7,7 +7,7 @@ import type { Order } from "@/lib/types";
  * Gửi email báo khách "đơn hàng đã được xác nhận" — CẦN domain đã xác minh trên Resend,
  * vì đích gửi là email của khách (khác nhau mỗi đơn), không phải email chủ tài khoản
  * Resend. Set RESEND_CUSTOMER_FROM trong .env.local (ví dụ:
- * "Ready Set <noreply@25oclockhome.com>") sau khi xác minh domain tại resend.com/domains.
+ * "Ready Set <noreply@ten-domain-cua-ban.com>") sau khi xác minh domain tại resend.com/domains.
  *
  * Chưa cấu hình thì hàm này bỏ qua, trả về false — trang admin sẽ nhắc bạn tự báo
  * khách qua Zalo/điện thoại.

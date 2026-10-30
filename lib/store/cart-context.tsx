@@ -32,7 +32,8 @@ type CartContextValue = {
   dismissToast: () => void;
 };
 
-const STORAGE_KEY = "readyset:cart";
+// v2: bỏ qua giỏ cũ còn lưu sản phẩm/handle đã đổi tên (VD: sample-02-t-shirt) trên trình duyệt người đã ghé bản trước.
+const STORAGE_KEY = "readyset:cart:v2";
 const TOAST_DURATION = 2800;
 
 const CartContext = createContext<CartContextValue | null>(null);

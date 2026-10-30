@@ -14,7 +14,7 @@ export function OrderActions({ orderId, status, paymentMethod }: Props) {
   const [loading, setLoading] = useState<Action | null>(null);
   const [message, setMessage] = useState<string | null>(null);
 
-  // Chỉ 2 phương thức tồn tại: COD và Chuyển khoản (VietQR) — COD không có khái niệm
+  // Chỉ 2 phương thức tồn tại: COD và Chuyển khoản — COD không có khái niệm
   // "đã nhận được tiền" trước khi giao hàng, nên đổi nhãn nút và ẩn nút nhắc thanh toán.
   const isCod = paymentMethod.includes("COD");
 

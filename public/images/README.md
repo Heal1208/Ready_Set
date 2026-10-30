@@ -38,7 +38,7 @@ public/images/
 │   │   ├── 03-back.jpg
 │   │   └── 04-detail.jpg
 │   │
-│   └── sample-02-t-shirt/
+│   └── faded-grey-oversized-t-shirt/
 │       ├── 01-front.jpg
 │       ├── 02-on-model.jpg
 │       └── 03-detail.jpg

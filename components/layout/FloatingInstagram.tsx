@@ -9,8 +9,10 @@ import { company } from "@/lib/data/company";
  * không đụng toast "Đã thêm vào giỏ" (góc dưới-phải, xem AddedToast.tsx).
  * Chỉ hiện trên desktop (md trở lên) — mobile đã có quá nhiều nút/thanh dính
  * đáy màn hình (thanh mua nhanh, toast...) nên bỏ icon này trên mobile.
+ * Tự ẩn khi chưa khai báo company.instagram.
  */
 export function FloatingInstagram() {
+  if (!company.instagram) return null;
   return (
     <motion.a
       href={company.instagram.url}

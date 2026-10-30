@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { motion, useAnimation } from "framer-motion";
 import type { Product } from "@/lib/types";
 import { useEffect, useRef, useState } from "react";
-import { IconBag, IconMenu, IconSearch, IconUser } from "@/components/ui/icons";
+import { IconBag, IconMenu, IconSearch } from "@/components/ui/icons";
 import { useCart } from "@/lib/store/cart-context";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
@@ -14,11 +14,9 @@ import { NavOverlay } from "@/components/layout/NavOverlay";
 import { SearchOverlay } from "@/components/layout/SearchOverlay";
 
 export function Header({
-  isLoggedIn = false,
   collectionCovers = {},
   products = [],
 }: {
-  isLoggedIn?: boolean;
   collectionCovers?: Record<string, string | null>;
   products?: Product[];
 }) {
@@ -104,9 +102,6 @@ export function Header({
             <button aria-label={t.header.search} onClick={() => setSearchOpen(true)} className="hidden p-1.5 md:block">
               <IconSearch className="h-5 w-5" />
             </button>
-            <Link href={isLoggedIn ? "/account" : "/account/login"} aria-label={isLoggedIn ? t.header.account : t.header.login} className="p-1.5">
-              <IconUser className="h-5 w-5" />
-            </Link>
             <button aria-label={t.header.cart} onClick={openCart} className="flex items-center gap-1 p-1.5">
               <motion.span animate={bagControls} className="inline-flex">
                 <IconBag className="h-5 w-5" />
@@ -120,7 +115,6 @@ export function Header({
       <NavOverlay
         isOpen={navOpen}
         onClose={() => setNavOpen(false)}
-        isLoggedIn={isLoggedIn}
         collectionCovers={collectionCovers}
         onOpenSearch={() => {
           setNavOpen(false);

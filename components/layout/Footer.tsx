@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { company } from "@/lib/data/company";
-import { NewsletterForm } from "@/components/layout/NewsletterForm";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 
 function FooterColumn({ heading, links }: { heading: string; links: { label: string; href: string }[] }) {
@@ -33,30 +32,29 @@ export function Footer() {
     { label: t.nav.sizeGuide, href: "/pages/size-guide" },
     { label: t.nav.shippingReturns, href: "/pages/shipping-returns" },
     { label: t.nav.contact, href: "/pages/contact" },
+    { label: t.nav.privacy, href: "/pages/privacy" },
   ];
   const aboutLinks = [
     { label: t.nav.lookbook, href: "/campaign" },
-    { label: t.nav.instagram, href: company.instagram.url },
+    ...(company.instagram ? [{ label: t.nav.instagram, href: company.instagram.url }] : []),
   ];
 
   return (
     <footer className="mt-24 bg-ink text-white">
-      <div className="container-25 grid grid-cols-2 gap-x-6 gap-y-10 py-14 md:grid-cols-4 md:gap-x-10 md:py-16">
+      <div className="container-25 grid grid-cols-2 gap-x-6 gap-y-10 py-14 md:grid-cols-3 md:gap-x-10 md:py-16">
         <FooterColumn heading={t.nav.shop} links={shopLinks} />
         <FooterColumn heading={t.nav.support} links={supportLinks} />
         <FooterColumn heading={t.nav.about} links={aboutLinks} />
-        <div className="col-span-2 md:col-span-1">
-          <h3 className="nav-link mb-4 text-white/50">{t.nav.subscribe}</h3>
-          <p className="text-[13px] text-white/70">{t.nav.subscribeBlurb}</p>
-          <NewsletterForm />
-        </div>
       </div>
 
       <div className="border-t border-white/15">
         <div className="container-25 flex flex-col gap-3 py-6 text-[12px] text-white/60 md:flex-row md:items-center md:justify-between">
-          <p>Email: {company.email}</p>
-          <div className="flex items-center gap-4">
+          <p>
+            Email: <a href={`mailto:${company.email}`} className="hover:text-white">{company.email}</a>
+          </p>
+          <div className="flex flex-col gap-1 md:flex-row md:items-center md:gap-4">
             <span>© {new Date().getFullYear()} Ready Set</span>
+            <span>{t.common.studentProject}</span>
           </div>
         </div>
       </div>

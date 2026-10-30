@@ -1,6 +1,11 @@
 # Ready Set — Website thương mại điện tử
 
-Website bán hàng cho brand thời trang **Ready Set**, dựng theo bản mô tả dự án:
+Website concept cho brand thời trang **Ready Set** — dự án sinh viên môn E-Business, Đại học Hà Nội
+(Student project – E-Business, Hanoi University). Web chỉ để test với người dùng, **không bán thật**:
+checkout chạy Test mode, không thu thập dữ liệu cá nhân, không gửi đơn lên server.
+Thông tin nhóm (email, Instagram, domain `siteUrl`) khai báo ở `lib/data/company.ts`.
+
+Dựng theo bản mô tả dự án:
 phong cách "gallery tối giản", nền kem `#EBECE6`,
 header đen, một font sans-serif duy nhất, ảnh sản phẩm tỉ lệ 3:4, không đổ bóng, không bo góc.
 
@@ -37,7 +42,7 @@ Website chạy được **hoàn chỉnh và độc lập**, không cần API key
 |---|---|---|
 | Sản phẩm / collection / campaign | Dữ liệu khai trong `lib/data/*.ts`, đúng kiểu dữ liệu ở `lib/types.ts` (3 sản phẩm thật, các collection còn lại để trống) | Thay bằng `lib/shopify/` gọi Storefront API (GraphQL), trả về đúng các kiểu này |
 | Ảnh sản phẩm | Đọc thật từ `public/images/products/<handle>/` (`lib/utils/productImages.ts`), rơi về khối màu `Placeholder` nếu thư mục rỗng | Thay bằng `next/image` trỏ Shopify CDN (`cdn.shopify.com` đã whitelist trong `next.config.mjs`) |
-| Thanh toán | **Đã nối thật**: QR VietQR động từ `lib/data/company.ts` (`bankAccount`) ở `app/checkout/page.tsx` — khách chuyển khoản, chủ shop tự đối chiếu sao kê | Có thể nâng cấp thêm webhook tự động (SePay/Casso) hoặc cổng thanh toán thẻ/ví (VNPay/MoMo/ZaloPay), hoặc chuyển hẳn sang Shopify Checkout hosted nếu đổi sang Shopify |
+| Thanh toán | **Test mode**: `app/(shop)/checkout/page.tsx` chỉ hiện màn hình xác nhận đơn thử nghiệm rồi xoá giỏ — không thanh toán, không gọi `/api/orders` | Khi bán thật: nối cổng thanh toán (VNPay/MoMo/ZaloPay) hoặc Shopify Checkout hosted |
 | Báo đơn hàng mới | **Đã nối thật**: mỗi đơn hoàn tất gọi `app/api/orders/route.ts`, gửi email qua [Resend](https://resend.com) tới `company.orderNotificationEmail` — cần `RESEND_API_KEY` trong `.env.local`, thiếu key thì bỏ qua gửi email chứ không chặn đặt hàng | — |
 | Lưu & quản lý đơn hàng | **Đã nối thật**: mỗi đơn được lưu vào Supabase (bảng `orders`), xem/xác nhận tại `/admin/orders` (đăng nhập bằng `ADMIN_PASSWORD`) — cần `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` và chạy `supabase/schema.sql` 1 lần | Có thể thêm phân trang, lọc theo trạng thái/ngày khi số đơn nhiều lên |
 | Báo khách hàng khi đơn được xác nhận | Nút "Xác nhận đã nhận được tiền" trong `/admin/orders/[id]` — **cần domain đã xác minh trên Resend** (`RESEND_CUSTOMER_FROM`), chưa có thì admin tự nhắn Zalo/gọi khách | Xác minh domain tại resend.com/domains rồi điền `RESEND_CUSTOMER_FROM`, không cần sửa code |
@@ -53,7 +58,7 @@ app/
   (shop)/page.tsx                Trang chủ: hero + new arrivals + category tiles + campaign + IG
   (shop)/collections/[handle]/   Danh mục: sắp xếp + bộ lọc phản ánh vào URL, lưới 2/3/4 cột
   (shop)/products/[handle]/      Chi tiết SP: gallery + buy box sticky + accordion + JSON-LD
-  (shop)/cart/, checkout/        Giỏ hàng + thanh toán (form + QR VietQR + báo đơn)
+  (shop)/cart/, checkout/        Giỏ hàng + checkout Test mode (không thu thập dữ liệu cá nhân)
   (shop)/campaign/, pages/[slug]/  Lookbook và các trang nội dung/chính sách
   (shop)/search/page.tsx         Kết quả tìm kiếm (hỗ trợ tiếng Việt không dấu)
   admin/layout.tsx, login/, orders/, orders/[id]/   Trang quản trị đơn hàng (đăng nhập bằng mật khẩu)
@@ -69,12 +74,12 @@ components/
   admin/     LogoutButton, OrderStatusBadge, OrderActions
   ui/        Button, Input, Drawer, Accordion, Placeholder, icons
 lib/
-  data/      products, collections, campaigns, pages, company (bankAccount, orderNotificationEmail), orders (Supabase CRUD)
+  data/      products, collections, campaigns, pages, company (siteUrl, email, instagram, orderNotificationEmail), orders (Supabase CRUD)
   store/     cart-context
   supabase/  admin.ts — client service role, chỉ dùng phía server
   auth/      admin.ts — mật khẩu + cookie phiên đăng nhập /admin
   email/     sendCustomerConfirmation.ts — email báo khách khi đơn được xác nhận
-  utils/     formatPrice (VND: "950,000₫"), vietqr (tạo URL mã QR), productImages (đọc ảnh thật, server-only)
+  utils/     formatPrice (VND: "950,000₫"), productImages (đọc ảnh thật, server-only)
 public/
   images/    Ảnh thật theo sản phẩm/logo/campaign — xem public/images/README.md
 supabase/
@@ -98,9 +103,9 @@ supabase/
 - Cart drawer trượt từ phải + thanh tiến độ freeship + ghi chú đơn hàng; giỏ lưu `localStorage`.
 - Footer 4 cột đầy đủ + dải thông tin pháp nhân, MST/GPKD, hotline, badge Bộ Công Thương.
 - Tìm kiếm overlay gợi ý tức thì (≥ 2 ký tự) và xử lý tiếng Việt không dấu ("quan ong rong").
-- Thanh toán chuyển khoản: mã VietQR động (đúng số tiền + nội dung = mã đơn), khách bấm xác nhận
-  đã chuyển → đơn được lưu vào database + **báo email ngay cho chủ shop** (tên, SĐT, địa chỉ, sản phẩm,
-  tổng tiền).
+- Checkout Test mode: chỉ hỏi mã tester (tuỳ chọn) + tỉnh/quận/phường (để tính phí ship) + ghi chú;
+  đặt hàng → màn hình "ĐƠN THỬ NGHIỆM" (mã đơn, sản phẩm, size, SL, phí ship, tổng) rồi xoá giỏ.
+  Không gửi gì lên server. Trang `/account/*` redirect về trang chủ.
 - Trang quản trị `/admin/orders`: đăng nhập bằng mật khẩu riêng, xem danh sách + chi tiết từng đơn,
   bấm "Xác nhận đã nhận được tiền" → đơn chuyển trạng thái "Đã xác nhận" (và gửi email báo khách nếu
   đã cấu hình domain gửi) hoặc "Huỷ đơn".

@@ -5,31 +5,23 @@
  * kết nối Shopify thật. Khi tích hợp Shopify Storefront API (mục 6.6), thay flow này
  * bằng redirect sang Shopify Checkout (hosted): `window.location.href = cart.checkoutUrl`.
  *
- * Chuyển khoản VietQR: mã QR được tạo động từ tài khoản khai báo ở lib/data/company.ts
- * (bankAccount) — khách quét, chuyển, chủ shop tự đối chiếu sao kê rồi xác nhận đơn.
- * Muốn tự động hoá (server tự nhận biết đã có tiền vào) thì cần nối thêm dịch vụ
- * webhook ngân hàng như SePay/Casso, hoặc một cổng thanh toán (VNPay/MoMo/ZaloPay).
- *
- * Mỗi đơn hoàn tất được gửi tới app/api/orders/route.ts để báo email về
- * company.orderNotificationEmail (qua Resend) — xem .env.local.example để bật.
+ * Bản concept cho dự án sinh viên: chỉ có "Test mode" — không thanh toán, không thu
+ * thập họ tên/SĐT/email/địa chỉ, và đơn KHÔNG gửi lên server (không gọi app/api/orders,
+ * không lưu Supabase, không gửi email). Đặt hàng chỉ hiện màn hình xác nhận rồi xoá giỏ.
  */
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useCart } from "@/lib/store/cart-context";
 import { formatPrice } from "@/lib/utils/formatPrice";
-import { buildVietQrUrl, isBankAccountConfigured } from "@/lib/utils/vietqr";
-import { isValidVietnamesePhone, normalizePhone } from "@/lib/utils/phone";
 import { Button, LinkButton } from "@/components/ui/Button";
 import { Input, Select, Textarea } from "@/components/ui/Input";
 import { BackButton } from "@/components/ui/BackButton";
 import { CartLineThumb } from "@/components/cart/CartLineThumb";
-import { IconInstagram } from "@/components/ui/icons";
 import { company } from "@/lib/data/company";
 import { provinces, getDistrictsByProvinceCode, getWardsByDistrictCode } from "@/lib/data/vietnamLocations";
-import type { CartLine, OrderPayload } from "@/lib/types";
+import type { CartLine } from "@/lib/types";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 import { haptic } from "@/lib/utils/haptics";
-import { getLastOrderInfoFor, saveLastOrderInfo } from "@/lib/utils/lastOrderInfo";
 
 type OrderSummary = {
   lines: CartLine[];
@@ -39,28 +31,26 @@ type OrderSummary = {
   paymentLabel: string;
 };
 
-type Step = { name: "form" } | ({ name: "done"; orderId: string } & OrderSummary);
+type Step = { name: "form" } | ({ name: "done"; orderId: string; testerCode: string } & OrderSummary);
 
 function makeOrderId(): string {
-  // ID này là primary key khi lưu đơn vào database — ghép timestamp (base36) +
-  // 3 ký tự ngẫu nhiên để tránh trùng nếu 2 đơn được tạo cùng lúc.
+  // Ghép timestamp (base36) + 3 ký tự ngẫu nhiên để 2 đơn thử liên tiếp không trùng mã.
   const ts = Date.now().toString(36).toUpperCase();
   const rand = Math.random().toString(36).slice(2, 5).toUpperCase();
-  return `25OC${ts}${rand}`;
+  return `TEST-${ts}${rand}`;
 }
 
-const EMPTY_CUSTOMER = { name: "", phone: "", email: "", address: "", city: "", district: "", ward: "", note: "" };
+const EMPTY_CUSTOMER = { testerCode: "", city: "", district: "", ward: "", note: "" };
 
 // Mã tỉnh/thành của Hà Nội trong lib/data/vietnamLocations.ts (dữ liệu 63 tỉnh/thành cũ) — dùng
 // để tính phí ship nội thành Hà Nội riêng, thấp hơn các tỉnh thành khác (mục company.shippingFeeHanoi).
 const HANOI_PROVINCE_CODE = 1;
 
-// Tự lưu tạm thông tin form checkout vào sessionStorage — lỡ khách bấm nhầm Back, rớt
-// mạng, hoặc reload giữa chừng thì quay lại vẫn còn nguyên, khỏi gõ lại từ đầu. Dùng
-// sessionStorage (không phải localStorage) vì đây là dữ liệu TẠM cho phiên duyệt web
-// hiện tại — đóng hẳn tab/trình duyệt thì tự xoá, không lưu thông tin cá nhân mãi mãi.
-// Xoá đi ngay sau khi đặt hàng thành công (xem handleSubmit).
-const DRAFT_STORAGE_KEY = "readyset:checkoutDraft";
+// Tự lưu tạm form checkout (mã tester, khu vực, ghi chú — không có dữ liệu cá nhân) vào
+// sessionStorage — lỡ bấm nhầm Back hay reload thì quay lại vẫn còn. Đóng tab là tự xoá;
+// xoá luôn ngay sau khi đặt hàng (xem handleSubmit).
+// v2: bỏ qua bản nháp cũ có họ tên/SĐT/email từ phiên bản trước.
+const DRAFT_STORAGE_KEY = "readyset:checkoutDraft:v2";
 
 type CheckoutDraft = {
   customer: typeof EMPTY_CUSTOMER;
@@ -68,66 +58,17 @@ type CheckoutDraft = {
   districtCode: number | null;
 };
 
-/**
- * Khối thông báo "chụp màn hình gửi Instagram" — dùng chung cho cả lúc điền
- * form (nhắc trước) và sau khi đặt hàng xong (nhắc lại, có mã đơn). Nền đen
- * đặc + icon để thật nổi bật, không dùng màu đỏ (giữ đúng tông đen-trắng của
- * shop, tránh gây cảm giác giống lỗi/cảnh báo).
- */
-function InstagramNotice({ heading, message }: { heading: string; message: React.ReactNode }) {
-  return (
-    <div className="border border-ink bg-ink px-4 py-4 text-white">
-      <div className="flex items-center gap-2">
-        <IconInstagram className="h-5 w-5 shrink-0" />
-        <p className="text-[13px] font-semibold uppercase tracking-wide">{heading}</p>
-      </div>
-      <p className="mt-2 text-[13px] leading-relaxed text-white/80">{message}</p>
-      <a
-        href={company.instagram.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="mt-3 inline-flex items-center gap-1.5 bg-white px-4 py-2 text-[12px] font-medium uppercase tracking-wide text-ink transition-colors hover:bg-white/85"
-      >
-        <IconInstagram className="h-3.5 w-3.5" />
-        {company.instagram.label}
-      </a>
-    </div>
-  );
-}
-
 export default function CheckoutPage() {
   const { lines, subtotalAmount, clearCart } = useCart();
   const { dict: t } = useLocale();
   const paymentLabel = t.checkout.paymentLabel;
   const [step, setStep] = useState<Step>({ name: "form" });
-  // Chặn bấm đúp "Đặt hàng" — bấm nhanh 2 lần trước khi React kịp render lại
-  // (đổi sang bước "done", ẩn nút đi) có thể tạo 2 đơn trùng trong Supabase.
-  const submittingRef = useRef(false);
   const [customer, setCustomer] = useState(EMPTY_CUSTOMER);
-  const [phoneError, setPhoneError] = useState<string | null>(null);
-  const [loggedInEmail, setLoggedInEmail] = useState<string | null>(null);
-  const [emailError, setEmailError] = useState<string | null>(null);
-  const [submitError, setSubmitError] = useState<string | null>(null);
-  const [placingOrder, setPlacingOrder] = useState(false);
   const [provinceCode, setProvinceCode] = useState<number | null>(null);
   const [districtCode, setDistrictCode] = useState<number | null>(null);
   const [draftHydrated, setDraftHydrated] = useState(false);
   const districts = useMemo(() => getDistrictsByProvinceCode(provinceCode), [provinceCode]);
   const wards = useMemo(() => getWardsByDistrictCode(provinceCode, districtCode), [provinceCode, districtCode]);
-
-  // Nếu khách đang đăng nhập, lấy sẵn email tài khoản — vừa để điền sẵn, vừa để đối
-  // chiếu email nhập ở form có khớp không (đơn phải cùng email mới nối được vào lịch
-  // sử tài khoản ở /account).
-  useEffect(() => {
-    fetch("/api/account/me")
-      .then((res) => res.json())
-      .then((data: { customer: { email: string; name: string } | null }) => {
-        if (!data.customer) return;
-        setLoggedInEmail(data.customer.email);
-        setCustomer((prev) => (prev.email ? prev : { ...prev, email: data.customer!.email }));
-      })
-      .catch(() => {});
-  }, []);
 
   // Nạp bản nháp form đã lưu (nếu có) khi vừa vào trang.
   useEffect(() => {
@@ -157,22 +98,6 @@ export default function CheckoutPage() {
       // bỏ qua nếu storage đầy / bị chặn
     }
   }, [customer, provinceCode, districtCode, draftHydrated]);
-
-  // Khách đã đăng nhập và từng đặt hàng thành công trước đó (cùng lượt đăng nhập, xem
-  // lib/utils/lastOrderInfo.ts) — tự điền lại thông tin giao hàng lần trước, khách chỉ
-  // cần kiểm tra lại. Chỉ áp dụng khi form đang THẬT SỰ trống (chưa có bản nháp/dữ liệu
-  // đang gõ dở) — không đè lên thông tin khách vừa nhập cho đơn khác.
-  useEffect(() => {
-    if (!draftHydrated || !loggedInEmail) return;
-    const saved = getLastOrderInfoFor(loggedInEmail);
-    if (!saved) return;
-    setCustomer((prev) => {
-      if (prev.address.trim() || prev.name.trim()) return prev;
-      return { ...prev, name: saved.name, phone: saved.phone, address: saved.address, city: saved.city, district: saved.district, ward: saved.ward };
-    });
-    setProvinceCode((prev) => (prev === null ? saved.provinceCode : prev));
-    setDistrictCode((prev) => (prev === null ? saved.districtCode : prev));
-  }, [draftHydrated, loggedInEmail]);
 
   const shippingFee =
     subtotalAmount >= company.freeShippingThreshold || subtotalAmount === 0
@@ -206,100 +131,21 @@ export default function CheckoutPage() {
     updateField("ward", ward?.name ?? "");
   }
 
-  /**
-   * Gửi đơn về app/api/orders — trả về true CHỈ KHI đơn thực sự được lưu vào Supabase
-   * ("saved" trong response, xem app/api/orders/route.ts). Email báo shop gửi thất bại
-   * KHÔNG tính là lỗi (đơn vẫn coi là thành công) — nhưng lưu DB thất bại thì phải coi
-   * là lỗi thật: trước đây hàm này "bắn và quên" (fire-and-forget), khiến khách luôn
-   * thấy "Đặt hàng thành công" + mã QR dù đơn có thể CHƯA HỀ được lưu (Supabase lỗi/rớt
-   * mạng/chưa cấu hình) — tức khách chuyển khoản cho 1 đơn mà shop không hề biết tới.
-   */
-  async function notifyOrder(orderId: string, paymentLabel: string): Promise<boolean> {
-    const payload: OrderPayload = {
-      orderId,
-      paymentMethod: paymentLabel,
-      // .trim().toLowerCase() ở đây — không thì lỗi khi khách bấm đặt hàng viết hoa/thường
-      // khác với email tài khoản (bàn phím điện thoại hay tự viết hoa chữ đầu) sẽ khiến đơn
-      // lưu vào DB với chữ hoa/thường khác, còn getOrdersByEmail() so khớp email kiểu chữ
-      // thường tuyệt đối (cột "text" thường, không phải "citext") — đơn bị lưu đúng nhưng
-      // "biến mất" khỏi trang Tài khoản của chính khách đó vì không khớp được.
-      customer: { ...customer, email: customer.email.trim().toLowerCase(), phone: normalizePhone(customer.phone) },
-      // Gửi kèm productHandle/variantId — server tự tra lại giá thật theo catalog từ 2
-      // trường này khi lưu đơn (không tin "title"/"price" gửi lên), xem app/api/orders/route.ts.
-      lines: lines.map((l) => ({
-        title: l.title,
-        size: l.size,
-        quantity: l.quantity,
-        price: l.price,
-        productHandle: l.productHandle,
-        variantId: l.variantId,
-      })),
-      subtotal: { amount: subtotalAmount, currencyCode: "VND" },
-      shippingFee: { amount: shippingFee, currencyCode: "VND" },
-      total: { amount: total, currencyCode: "VND" },
-    };
-    try {
-      const res = await fetch("/api/orders", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) return false;
-      const data: { ok: boolean; saved?: boolean } = await res.json();
-      return data.saved === true;
-    } catch (err) {
-      console.warn("[checkout] Không gửi được đơn hàng:", err);
-      return false;
-    }
-  }
-
-  async function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (submittingRef.current) return; // đang xử lý lượt bấm trước — bỏ qua các lần bấm thêm
-    if (!isValidVietnamesePhone(customer.phone)) {
-      setPhoneError(t.checkout.phoneInvalid);
-      return;
-    }
-    setPhoneError(null);
-    if (loggedInEmail && customer.email.trim().toLowerCase() !== loggedInEmail.toLowerCase()) {
-      setEmailError(t.checkout.emailMismatch(loggedInEmail));
-      return;
-    }
-    setEmailError(null);
-    setSubmitError(null);
-    submittingRef.current = true;
-    setPlacingOrder(true);
-    const orderId = makeOrderId();
-    const saved = await notifyOrder(orderId, paymentLabel);
-    setPlacingOrder(false);
-    if (!saved) {
-      // Lưu thất bại thật (không phải chỉ email báo shop) — KHÔNG được coi là thành
-      // công: giữ nguyên form + giỏ hàng, để khách bấm thử lại thay vì đưa họ tới bước
-      // "đặt hàng thành công" cho 1 đơn chưa hề tồn tại trong hệ thống.
-      submittingRef.current = false;
-      setSubmitError(t.checkout.orderSaveFailed);
-      return;
-    }
     haptic("success");
-    // Đã đăng nhập — nhớ lại thông tin giao hàng lần này cho đơn tiếp theo trong cùng
-    // lượt đăng nhập tự điền sẵn (xem effect nạp lại ở trên + lib/utils/lastOrderInfo.ts).
-    if (loggedInEmail) {
-      saveLastOrderInfo({
-        email: loggedInEmail,
-        name: customer.name,
-        phone: customer.phone,
-        address: customer.address,
-        city: customer.city,
-        district: customer.district,
-        ward: customer.ward,
-        provinceCode,
-        districtCode,
-      });
-    }
-    // Chụp lại giỏ hàng trước khi clearCart() xoá sạch — bước xác nhận cần hiện
-    // lại đúng những gì vừa đặt. Đơn được ghi nhận ngay — không còn nút "Tôi đã
-    // chuyển khoản": khách chụp mã đơn gửi qua Instagram rồi thanh toán/xác nhận ở đó.
-    setStep({ name: "done", orderId, lines, subtotal: subtotalAmount, shippingFee, total, paymentLabel });
+    // Chụp lại giỏ hàng trước khi clearCart() xoá sạch — bước xác nhận cần hiện lại
+    // đúng những gì vừa đặt. Không gửi gì lên server: đây chỉ là đơn thử nghiệm.
+    setStep({
+      name: "done",
+      orderId: makeOrderId(),
+      testerCode: customer.testerCode.trim(),
+      lines,
+      subtotal: subtotalAmount,
+      shippingFee,
+      total,
+      paymentLabel,
+    });
     clearCart();
     try {
       window.sessionStorage.removeItem(DRAFT_STORAGE_KEY);
@@ -309,58 +155,21 @@ export default function CheckoutPage() {
   }
 
   if (step.name === "done") {
-    const qrUrl = buildVietQrUrl(step.total, step.orderId);
     return (
       <div className="container-25 py-16">
         <div className="text-center">
           <h1 className="text-[22px] font-medium uppercase tracking-[0.06em]">{t.checkout.orderSuccess}</h1>
           <p className="mt-2 text-[14px] text-ink-60">
             {t.checkout.orderCode} <strong className="text-ink">#{step.orderId}</strong>
+            {step.testerCode ? <> · Tester: <strong className="text-ink">{step.testerCode}</strong></> : null}
           </p>
         </div>
 
-        {/* 2 cột từ md trở lên — trái: mã QR + số tiền cần chuyển (thứ cần đọc trước
-        tiên, để riêng cho gọn mắt); phải: bước tiếp theo + chi tiết đơn hàng, danh
-        sách sản phẩm tự cuộn riêng nếu đơn nhiều món, không kéo dài cả trang. */}
-        <div className="mt-8 grid grid-cols-1 items-start gap-10 md:grid-cols-2">
-          <div className="flex flex-col items-center gap-5 text-center">
-            {/* eslint-disable-next-line @next/next/no-img-element -- ảnh QR động từ VietQR.io, không cần tối ưu qua next/image */}
-            <img
-              src={qrUrl}
-              alt={t.checkout.qrAlt(formatPrice({ amount: step.total, currencyCode: "VND" }))}
-              width={300}
-              height={430}
-              className="border border-line"
-            />
-
-            <div className="text-[14px]">
-              <p>
-                {t.checkout.amount}: <strong>{formatPrice({ amount: step.total, currencyCode: "VND" })}</strong>
-              </p>
-              <p>
-                {t.checkout.transferContent}: <strong>{step.orderId}</strong>
-              </p>
-              <p className="mt-2 text-ink-60">
-                {company.bankAccount.accountName} — {company.bankAccount.bankId.toUpperCase()} —{" "}
-                {company.bankAccount.accountNumber}
-              </p>
-            </div>
-
-            {!isBankAccountConfigured() ? (
-              <p className="max-w-sm text-[12px] text-sale">{t.checkout.sampleAccountWarning}</p>
-            ) : null}
-          </div>
-
+        <div className="mx-auto mt-8 max-w-xl">
           <div className="flex flex-col gap-4 text-left">
-            <InstagramNotice
-              heading={t.checkout.igDoneHeading}
-              message={
-                <>
-                  {t.checkout.igDoneMessage} <strong className="text-white">#{step.orderId}</strong>
-                  {t.checkout.igDoneMessageEnd}
-                </>
-              }
-            />
+            <p className="border border-ink bg-ink px-4 py-4 text-center text-[13px] font-semibold uppercase tracking-wide text-white">
+              {t.checkout.testOrderBanner}
+            </p>
 
             <div className="w-full border border-line">
               {/* max-h + overflow-y-auto — đơn nhiều món thì cuộn riêng trong khung này,
@@ -443,66 +252,10 @@ export default function CheckoutPage() {
             <h2 className="nav-link mb-4">{t.checkout.shippingInfo}</h2>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Input
-                required
-                placeholder={t.checkout.fullName}
-                value={customer.name}
-                onChange={(e) => updateField("name", e.target.value)}
-              />
-              <div>
-                <Input
-                  required
-                  type="tel"
-                  placeholder={t.checkout.phone}
-                  value={customer.phone}
-                  onChange={(e) => {
-                    updateField("phone", e.target.value);
-                    if (phoneError) setPhoneError(null); // xoá lỗi ngay khi khách sửa lại
-                  }}
-                  aria-invalid={phoneError ? true : undefined}
-                  className={phoneError ? "border-sale" : undefined}
-                />
-                {phoneError ? <p className="mt-1 text-[12px] text-sale">{phoneError}</p> : null}
-              </div>
-              <div className="sm:col-span-2">
-                <Input
-                  required
-                  type="email"
-                  autoCapitalize="none"
-                  autoCorrect="off"
-                  spellCheck={false}
-                  placeholder={t.checkout.email}
-                  value={customer.email}
-                  onChange={(e) => {
-                    updateField("email", e.target.value);
-                    if (emailError) setEmailError(null); // xoá lỗi ngay khi khách sửa lại
-                  }}
-                  aria-invalid={emailError ? true : undefined}
-                  className={emailError ? "border-sale" : undefined}
-                />
-                {emailError ? (
-                  <p className="mt-1 text-[12px] text-sale">
-                    {emailError}{" "}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        updateField("email", loggedInEmail!);
-                        setEmailError(null);
-                      }}
-                      className="underline underline-offset-2"
-                    >
-                      {t.checkout.useAccountEmail}
-                    </button>
-                  </p>
-                ) : loggedInEmail ? (
-                  <p className="mt-1 text-[12px] text-ink-60">{t.checkout.usingAccountEmail(loggedInEmail)}</p>
-                ) : null}
-              </div>
-              <Input
-                required
-                placeholder={t.checkout.address}
+                placeholder={t.checkout.testerCode}
                 className="sm:col-span-2"
-                value={customer.address}
-                onChange={(e) => updateField("address", e.target.value)}
+                value={customer.testerCode}
+                onChange={(e) => updateField("testerCode", e.target.value)}
               />
               <Select
                 required
@@ -567,9 +320,7 @@ export default function CheckoutPage() {
             <div className="border border-ink px-4 py-3 text-[14px]">
               <p className="font-medium">{paymentLabel}</p>
             </div>
-            <div className="mt-3">
-              <InstagramNotice heading={t.checkout.igNoticeHeading} message={t.checkout.igNoticeMessage} />
-            </div>
+            <p className="mt-3 text-[13px] text-ink-60">{t.checkout.conceptNote}</p>
           </section>
         </div>
 
@@ -609,10 +360,8 @@ export default function CheckoutPage() {
             </div>
           </div>
 
-          {submitError ? <p className="mt-4 text-[13px] text-sale">{submitError}</p> : null}
-
-          <Button type="submit" fullWidth className="mt-6" disabled={placingOrder}>
-            {placingOrder ? t.checkout.placingOrder : t.checkout.placeOrder}
+          <Button type="submit" fullWidth className="mt-6">
+            {t.checkout.placeOrder}
           </Button>
         </div>
       </form>

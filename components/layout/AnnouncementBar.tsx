@@ -13,7 +13,10 @@ export function AnnouncementBar({ transparent, onClose }: { transparent: boolean
         transparent ? "bg-ink/60 text-white" : "bg-ink text-white"
       }`}
     >
-      <span>{t.announcement.freeShipping(formatPrice({ amount: company.freeShippingThreshold, currencyCode: "VND" }))}</span>
+      <span className="flex flex-col sm:flex-row sm:gap-3">
+        <span>{t.announcement.freeShipping(formatPrice({ amount: company.freeShippingThreshold, currencyCode: "VND" }))}</span>
+        <span>{t.common.studentProject}</span>
+      </span>
       <button aria-label={t.announcement.close} onClick={onClose} className="shrink-0">
         <IconClose className="h-3 w-3" />
       </button>

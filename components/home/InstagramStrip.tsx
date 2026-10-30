@@ -5,6 +5,7 @@ import { company } from "@/lib/data/company";
 import { getT } from "@/lib/i18n/locale";
 
 export async function InstagramStrip() {
+  if (!company.instagram) return null;
   const t = await getT();
   return (
     <section className="container-25 py-16 md:py-24">

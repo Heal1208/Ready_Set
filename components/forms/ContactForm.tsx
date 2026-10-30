@@ -2,35 +2,24 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
-import { Input, Textarea } from "@/components/ui/Input";
+import { Textarea } from "@/components/ui/Input";
+import { company } from "@/lib/data/company";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 
 export function ContactForm() {
   const { dict: t } = useLocale();
-  const [sent, setSent] = useState(false);
+  const [message, setMessage] = useState("");
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    // Chưa nối API/email thật — chỉ demo trải nghiệm gửi form thành công.
-    setSent(true);
-  }
-
-  if (sent) {
-    return (
-      <div className="border border-line px-6 py-10 text-center">
-        <p className="text-[15px]">{t.contact.thankYou}</p>
-      </div>
-    );
+    // Không gửi lên server — mở ứng dụng email của người dùng với nội dung đã soạn.
+    window.location.href = `mailto:${company.email}?subject=${encodeURIComponent("Ready Set")}&body=${encodeURIComponent(message)}`;
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-        <Input required placeholder={t.checkout.fullName} />
-        <Input required type="tel" placeholder={t.checkout.phone} />
-      </div>
-      <Input required type="email" autoCapitalize="none" autoCorrect="off" spellCheck={false} placeholder={t.checkout.email} />
-      <Textarea required rows={4} placeholder={t.contact.messageContent} />
+      <Textarea required rows={4} placeholder={t.contact.messageContent} value={message} onChange={(e) => setMessage(e.target.value)} />
+      <p className="text-[12px] text-ink-60">{t.contact.mailtoHint}</p>
       <Button type="submit" className="px-8">
         {t.contact.submit}
       </Button>

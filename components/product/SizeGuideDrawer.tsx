@@ -59,7 +59,7 @@ export function SizeGuideDrawer({ isOpen, onClose, sizeChart, modelInfo }: Props
         ) : (
           <p className="text-[14px] text-ink-60">{t.product.noSizeChart}</p>
         )}
-        <p className="mt-4 text-[13px] text-ink-60">{modelInfo}</p>
+        {modelInfo ? <p className="mt-4 text-[13px] text-ink-60">{modelInfo}</p> : null}
         <p className="mt-4 text-[13px] text-ink-60">
           {t.product.sizeDisclaimer}{" "}
           <a href="/pages/size-guide" className="underline underline-offset-2">

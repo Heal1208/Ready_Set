@@ -2,8 +2,9 @@ import type { MetadataRoute } from "next";
 import { getAllProducts } from "@/lib/data/products";
 import { collections } from "@/lib/data/collections";
 import { staticPages } from "@/lib/data/pages";
+import { company } from "@/lib/data/company";
 
-const BASE_URL = "https://25oclockhome.com";
+const BASE_URL = company.siteUrl;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = ["", "/campaign", "/pages/contact"].map((path) => ({

@@ -26,13 +26,11 @@ const LOOKBOOKS = [
 export function NavOverlay({
   isOpen,
   onClose,
-  isLoggedIn = false,
   collectionCovers = {},
   onOpenSearch,
 }: {
   isOpen: boolean;
   onClose: () => void;
-  isLoggedIn?: boolean;
   collectionCovers?: Record<string, string | null>;
   /** Mobile ẩn icon tìm kiếm ở header, chuyển vào đây — desktop vẫn dùng icon riêng ở header nên không cần gọi prop này. */
   onOpenSearch?: () => void;
@@ -40,13 +38,12 @@ export function NavOverlay({
   const { dict: t, locale, setLocale } = useLocale();
   const [hovered, setHovered] = useState(SHOP_LINKS[0]);
   const [lookbookOpen, setLookbookOpen] = useState(false);
-  const accountLink = isLoggedIn ? { label: t.header.account, href: "/account" } : { label: t.header.login, href: "/account/login" };
   const otherLinks = [
     { label: t.nav.about, href: "/pages/about" },
     { label: t.nav.contact, href: "/pages/contact" },
     { label: t.nav.shippingReturns, href: "/pages/shipping-returns" },
   ];
-  const links = [...otherLinks, accountLink];
+  const links = otherLinks;
   const shopLinkLabel = (handle: string, fallback: string) => (handle === "all" ? t.nav.allProducts : fallback);
 
   useEffect(() => {

@@ -11,6 +11,8 @@ export default async function NotFound() {
       <LinkButton href="/" className="mt-2">
         {t.common.backHome}
       </LinkButton>
+      {/* URL lạ không khớp route nào rơi vào đây, ngoài layout (shop) nên không có footer. */}
+      <p className="mt-10 text-[12px] text-ink-60">{t.common.studentProject}</p>
     </div>
   );
 }

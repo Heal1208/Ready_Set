@@ -1,6 +1,13 @@
 export const company = {
-  email: "25oclockhome@gmail.com",
-  instagram: { label: "@25oclock.home", url: "https://instagram.com/25oclock.home" },
+  /** Domain web đã deploy — dùng cho metadata, canonical, sitemap, robots. */
+  siteUrl: "https://readyset-web.onrender.com",
+  email: "doquochung251205@gmail.com",
+  /**
+   * Instagram của nhóm — để null khi chưa có, mọi chỗ hiện Instagram (footer, nút nổi,
+   * trang chủ, trang liên hệ) tự ẩn. Có link thì điền dạng
+   * { label: "@ten.tai.khoan", url: "https://instagram.com/ten.tai.khoan" }.
+   */
+  instagram: null as { label: string; url: string } | null,
   freeShippingThreshold: 1000000,
   /**
    * Phí vận chuyển khi đơn CHƯA đạt mốc miễn phí ở trên — tách riêng nội thành Hà Nội
@@ -12,25 +19,11 @@ export const company = {
   /** Số ngày được đổi/trả hàng kể từ khi nhận — dùng chung ở trang sản phẩm và trang chính sách, sửa 1 chỗ này là đủ. */
   returnWindowDays: 3,
   /**
-   * Tài khoản ngân hàng nhận chuyển khoản — dùng để tạo mã VietQR ở trang /checkout.
-   * Sửa 3 dòng dưới đây thành thông tin thật của bạn rồi lưu lại, web sẽ tự cập nhật QR.
-   *
-   * bankId: mã ngân hàng theo VietQR — dùng tên viết thường không dấu, ví dụ:
-   *   vietcombank, vietinbank, bidv, agribank, techcombank, mbbank, acb, vpbank,
-   *   tpbank, sacombank, hdbank, vib, shb, msb, ocb, eximbank, scb...
-   *   (tra đầy đủ tại https://api.vietqr.io/v2/banks — lấy giá trị cột "code")
-   */
-  bankAccount: {
-    bankId: "TECHCOMBANK",
-    accountNumber: "19074609130010",
-    accountName: "DO QUOC HUNG",
-  },
-  /**
    * Email nhận thông báo mỗi khi có đơn hàng mới (xem app/api/orders/route.ts).
    *
    * Đang để tạm là email bạn dùng đăng ký Resend — vì khi CHƯA xác minh domain
    * riêng trên Resend, "from: onboarding@resend.dev" chỉ được phép gửi tới đúng
-   * email đó. Muốn nhận thông báo ở email khác (ví dụ hello@25oclockhome.com), vào
+   * email đó. Muốn nhận thông báo ở email khác, vào
    * resend.com/domains xác minh domain đó rồi đổi "from" trong
    * app/api/orders/route.ts sang địa chỉ thuộc domain vừa xác minh.
    */

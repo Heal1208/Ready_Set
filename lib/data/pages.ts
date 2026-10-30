@@ -28,6 +28,10 @@ sections: [
       "Denim là thứ Ready Set chọn làm chất liệu chính và đại diện cho brand. Mỗi đợt sản phẩm đều có một số lượng nhất định để có thể kiểm soát được chất lượng tốt nhất trước khi đến tay khách hàng.",
     ],
   },
+  {
+    heading: "Dự án sinh viên",
+    paragraphs: ["Đây là sản phẩm concept trong dự án sinh viên, không bán thật."],
+  },
 ],
   },
   {
@@ -58,6 +62,7 @@ sections: [
   {
     slug: "shipping-returns",
     title: "Vận chuyển & đổi trả",
+    intro: "Đây là chính sách dự kiến khi Ready Set chính thức ra mắt.",
     sections: [
       {
         heading: "Vận chuyển nội địa",
@@ -71,7 +76,7 @@ sections: [
       {
         heading: "Vận chuyển quốc tế",
         paragraphs: [
-          "Đối với các đơn hàng quốc tế vui lòng liên hệ qua trang instagram của READY SET để được tư vấn cũng như hỗ trợ một cách chi tiết.",
+          `Đối với các đơn hàng quốc tế vui lòng liên hệ qua email ${company.email} để được tư vấn cũng như hỗ trợ một cách chi tiết.`,
         ],
       },
       {
@@ -81,6 +86,32 @@ sections: [
           "Sản phẩm còn nguyên tem, chưa qua sử dụng hoặc giặt.",
           "Chi phí vận chuyển đổi trả do khách hàng chi trả, trừ trường hợp lỗi từ nhà sản xuất.",
         ],
+      },
+    ],
+  },
+  {
+    slug: "privacy",
+    title: "Chính sách bảo mật",
+    intro: "Ready Set là dự án sinh viên môn E-Business (Đại học Hà Nội). Trang này mô tả đúng cách web đang hoạt động.",
+    sections: [
+      {
+        heading: "Dữ liệu chúng tôi thu thập",
+        paragraphs: ["Web không thu thập họ tên, số điện thoại, email hay địa chỉ của bạn. Không có form nào yêu cầu các thông tin này."],
+      },
+      {
+        heading: "Giỏ hàng và đơn thử nghiệm",
+        paragraphs: [
+          "Giỏ hàng chỉ được lưu trên trình duyệt của bạn (localStorage), không gửi lên server.",
+          "Đơn thử nghiệm ở bước thanh toán không được gửi lên server và không có thanh toán hay giao hàng thật. Mã tester, khu vực và ghi chú bạn nhập chỉ nằm trên trình duyệt của bạn.",
+        ],
+      },
+      {
+        heading: "Cookie",
+        paragraphs: ["Web không dùng cookie quảng cáo hay theo dõi. Web chỉ lưu lựa chọn ngôn ngữ của bạn."],
+      },
+      {
+        heading: "Liên hệ",
+        paragraphs: [`Mọi câu hỏi về dữ liệu, vui lòng gửi email tới ${company.email}.`],
       },
     ],
   },
@@ -101,6 +132,10 @@ export const staticPagesEn: StaticPage[] = [
           "Ready Set started in 2025 in Hanoi, from someone who loved clothes and wanted to share that through product rather than words.",
           "Denim is the material Ready Set chose as its core and its signature. Every drop is made in a limited quantity so we can control quality as closely as possible before it reaches you.",
         ],
+      },
+      {
+        heading: "Student project",
+        paragraphs: ["This is a concept product from a student project — nothing is actually sold."],
       },
     ],
   },
@@ -133,6 +168,7 @@ export const staticPagesEn: StaticPage[] = [
   {
     slug: "shipping-returns",
     title: "Shipping & Returns",
+    intro: "This is the planned policy for when Ready Set officially launches.",
     sections: [
       {
         heading: "Domestic shipping",
@@ -141,7 +177,7 @@ export const staticPagesEn: StaticPage[] = [
       },
       {
         heading: "International shipping",
-        paragraphs: ["For international orders, please reach out via READY SET's Instagram for detailed support."],
+        paragraphs: [`For international orders, please reach out via email at ${company.email} for detailed support.`],
       },
       {
         heading: "Returns & exchanges",
@@ -150,6 +186,32 @@ export const staticPagesEn: StaticPage[] = [
           "Item must have tags attached, unused and unwashed.",
           "Return shipping cost is covered by the customer, except in cases of a manufacturing defect.",
         ],
+      },
+    ],
+  },
+  {
+    slug: "privacy",
+    title: "Privacy Policy",
+    intro: "Ready Set is a student project for the E-Business course at Hanoi University. This page describes exactly how the site works.",
+    sections: [
+      {
+        heading: "Data we collect",
+        paragraphs: ["The site does not collect your name, phone number, email or address. No form asks for this information."],
+      },
+      {
+        heading: "Cart and test orders",
+        paragraphs: [
+          "Your cart is stored only in your own browser (localStorage) and is never sent to a server.",
+          "Test orders placed at checkout are not sent to any server, and there is no real payment or delivery. The tester code, area and note you enter stay in your browser.",
+        ],
+      },
+      {
+        heading: "Cookies",
+        paragraphs: ["The site uses no advertising or tracking cookies. It only remembers your language choice."],
+      },
+      {
+        heading: "Contact",
+        paragraphs: [`For any questions about data, please email ${company.email}.`],
       },
     ],
   },
